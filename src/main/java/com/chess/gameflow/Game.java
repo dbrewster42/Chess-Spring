@@ -8,20 +8,25 @@ import com.chess.pieces.*;
 import com.chess.board.*;
 
 public class Game {
-    public static Player player1, player2;
-//    Board board;
+    public static Player player1;
+    public static Player player2;
+    public static Player[] players = new Player[2];
+    //Board board;
 
     public Game(String name, String name2){
         //Board board = Board.boardConstructor();
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
+        System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
+        players[0] = player1;
+        players[1] = player2;
     }
 
     public static Player getCurrentTeam(boolean isWhite){
         if (isWhite){
-            return player1;
+            return players[0];
         } else {
-            return player2;
+            return players[1];
         }
     }
 

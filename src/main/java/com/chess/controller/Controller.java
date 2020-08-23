@@ -8,36 +8,49 @@ import com.chess.models.BoardRequest;
 import com.chess.models.PlayerRequest;
 import com.chess.models.Response;
 import com.chess.models.StatusResponse;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins= {"http://localhost:3000"})
+@CrossOrigin(origins= "http://localhost:3000", maxAge=7200)
 @RestController
 @RequestMapping("/game")
 public class Controller {
-    private boolean isWhite = true;
-    Player player;
+    //private boolean isWhite = true;
+    //Player player;
     Game game;
     Board board = Board.boardConstructor();
 
-//    public Controller(Game game){
-//        this.game = game;
-//    }
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
+    )
 
+    @GetMapping
+    public List<Response> getBoard(){
+        List<Response> returnValue = board.returnBoard();
+        return returnValue;
+    }
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
         game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
-        Player player1 = Game.getCurrentTeam(true);
+        //Player player1 = game.getCurrentTeam(true);
+        Player player1= Game.players[0];
+        if (player1 == null){
+            System.out.println("screw your mother's sister's friend's horse!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! People call her ho for short");
+        }
+        //System.out.println(player1.getName() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1);
+        //System.out.println(player1.getName() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ Status.isActive());
         returnValue.add(status);
         return returnValue;
     }
 
     @PostMapping
     public List<Response> makeMove(@RequestBody BoardRequest boardRequest){
+        System.out.println(boardRequest.getStart() + " HELLO THERE NEIGHBOR " + boardRequest.getEnd());
         StatusResponse status = game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);

@@ -10,6 +10,7 @@ public class StatusResponse extends Response {
     private Player player;
     private String playerName;
     private Piece[] team;
+    private boolean isWhite;
 
 //    public StatusResponse(Player player){
 //        this(true, false, player.getName(), player.getTeam());
@@ -17,12 +18,10 @@ public class StatusResponse extends Response {
 
     public StatusResponse(boolean active, boolean check, Player player) {
         this.active = active;
-//        if (!active){
-//            message = "Game Over";
-//        }
         this.check = check;
         this.playerName = player.getName();
         this.team = player.getTeam();
+        this.isWhite = player.isWhite();
     }
 
     public boolean isActive() {

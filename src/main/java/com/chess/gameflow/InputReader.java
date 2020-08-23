@@ -20,16 +20,16 @@ public class InputReader {
     ************** First half of Piece Select(input) ****************
     */
     public static void preSelect(Player player, Board gameboard) {
-        if (Move.moves.size() > 20) {
-            int whiteCount = Game.player1.pieceCount();
-            int blackCount = Game.player2.pieceCount();
-            // System.out.println(whiteCount + " " + blackCount);
-            if (whiteCount == 1 && blackCount == 1) {
-                Status.draw = true;
-                Status.setActive(false);
-
-            }
-        }
+//        if (Move.moves.size() > 20) {
+//            int whiteCount = Game.player1.pieceCount();
+//            int blackCount = Game.player2.pieceCount();
+//            // System.out.println(whiteCount + " " + blackCount);
+//            if (whiteCount == 1 && blackCount == 1) {
+//                Status.draw = true;
+//                Status.setActive(false);
+//
+//            }
+//        }
         System.out.println();
         System.out.println(player.getName() + ", it is your turn.");
         System.out.println("Enter 999 to display a list of all the remaining pieces");
@@ -49,8 +49,8 @@ public class InputReader {
             scanner.nextLine();
             if (action == 999) {
                 player.getPieces();
-                Player otherPlayer = Game.getOtherTeam(player);
-                otherPlayer.getPieces();
+//                Player otherPlayer = game.getOtherTeam(player);
+//                otherPlayer.getPieces();
             } else if (action == 888) {
                 gameboard.showDetailedBoard();
             } else if (action == 777) {
