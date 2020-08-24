@@ -22,22 +22,22 @@ public class Game {
         players[1] = player2;
     }
 
-    public static Player getCurrentTeam(boolean isWhite){
-        if (isWhite){
-            return players[0];
-        } else {
-            return players[1];
-        }
-    }
+//    public static Player getCurrentTeam(boolean isWhite){
+//        if (isWhite){
+//            return players[0];
+//        } else {
+//            return players[1];
+//        }
+//    }
 
     /*
      ************** Get other Team ****************
      */
     public static Player getOtherTeam(Player player) {
         if (player.isWhite()) {
-            return player2;
+            return players[1];
         } else {
-            return player1;
+            return players[0];
         }
     }
 
@@ -68,26 +68,24 @@ public class Game {
      ************** Select a Piece ****************
      */
     public static void selectPiece(Player player, int pieceSelection) {
-        //int action = pieceSelection;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
         System.out.println("X: " + x + " , Y: " + y);
         Square chosen = Board.squares[x][y];
         if (chosen.hasPiece()) {
             Piece piece = chosen.getPiece();
             if (player.hasPiece(piece)) {
                 System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
-                InputReader.preMove(player, x, y, board);
+                //InputReader.preMove(player, x, y, board);
                 return;
             } else {
                 System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
-                InputReader.preSelect(player, board);
+                //InputReader.preSelect(player, board);
             }
 
         } else {
             System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
-            InputReader.preSelect(player, board);
+            //InputReader.preSelect(player, board);
         }
     }
 
@@ -100,7 +98,7 @@ public class Game {
         Board board = Board.boardConstructor();
         Square initial = Board.squares[x][y];
         Piece piece = initial.getPiece();
-        // System.out.println(action + " " + piece.getName() + " " + initial.getX());
+        System.out.println("Moving the piece from " + pieceSelection + " " + piece.getName() + " to " + action);
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
@@ -164,9 +162,16 @@ public class Game {
     }
 
 
-    public StatusResponse run(BoardRequest boardRequest){
-        Player player = getCurrentTeam(boardRequest.isWhite());
+    public static StatusResponse run(BoardRequest boardRequest){
+        System.out.println("hi");
+        Player player = players[1];
+        System.out.println("ho");
+        if (boardRequest.isWhite()){
+            player = players[0];
+        }
+        System.out.println(player.getName() + " Game.java ?jdsklfjas kfhjdklsfj skfksajf");
         if (Status.isActive()){
+            System.out.println(Status.isActive() + " active active active ");
             Game.selectPiece(player, boardRequest.getStart());
             Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             Player otherPlayer = getOtherTeam(player);

@@ -7,7 +7,7 @@ public class StatusResponse extends Response {
     private boolean active = true;
     private boolean check = false;
     private String message;
-    private Player player;
+    //private Player player;
     private String playerName;
     private Piece[] team;
     private boolean isWhite;

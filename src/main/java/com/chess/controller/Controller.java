@@ -22,15 +22,15 @@ public class Controller {
     Game game;
     Board board = Board.boardConstructor();
 
-    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
-            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
-    )
+//    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
+//            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
+//    )
 
-    @GetMapping
-    public List<Response> getBoard(){
-        List<Response> returnValue = board.returnBoard();
-        return returnValue;
-    }
+//    @GetMapping
+//    public List<Response> getBoard(){
+//        List<Response> returnValue = board.returnBoard();
+//        return returnValue;
+//    }
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
@@ -50,8 +50,8 @@ public class Controller {
 
     @PostMapping
     public List<Response> makeMove(@RequestBody BoardRequest boardRequest){
-        System.out.println(boardRequest.getStart() + " HELLO THERE NEIGHBOR " + boardRequest.getEnd());
-        StatusResponse status = game.run(boardRequest);
+        System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
+        StatusResponse status = Game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
         return returnValue;

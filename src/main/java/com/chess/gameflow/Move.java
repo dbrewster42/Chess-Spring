@@ -35,6 +35,7 @@ public class Move {
         } else {
             message = player.getName() + " has performed a short side castle";
         }
+        System.out.println("Making moves " + piece.getType());
         moves.add(this);
 
     }

@@ -26,6 +26,7 @@ public class Status {
             return false;
         }
         Player otherTeam = Game.getOtherTeam(player);
+        System.out.println(otherTeam.getName());
         King king = otherTeam.getKing();
         System.out.println(king.getName() + king.getColor());
         int kingX = king.getX();
