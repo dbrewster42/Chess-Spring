@@ -70,7 +70,7 @@ public class Game {
     public static void selectPiece(Player player, int pieceSelection) {
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        System.out.println("X: " + x + " , Y: " + y);
+        //System.out.println("X: " + x + " , Y: " + y);
         Square chosen = Board.squares[x][y];
         if (chosen.hasPiece()) {
             Piece piece = chosen.getPiece();
@@ -149,7 +149,8 @@ public class Game {
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
                 Status.setCheck(true);
-                if (Status.isCheckMate(otherPlayer)) {
+                System.out.println("It should be check" + Status.isCheck());
+                if (Status.didCheckMate(otherPlayer)) {
                     Status.setCheckMate(true);
                     Status.setActive(false);
                 }
@@ -163,18 +164,23 @@ public class Game {
 
 
     public static StatusResponse run(BoardRequest boardRequest){
-        System.out.println("hi");
         Player player = players[1];
-        System.out.println("ho");
         if (boardRequest.isWhite()){
+            System.out.println("Every OTHER");
             player = players[0];
         }
-        System.out.println(player.getName() + " Game.java ?jdsklfjas kfhjdklsfj skfksajf");
+        //System.out.println("hi" + player.getName());
+        //System.out.println(player.getName() + " Game.java ?jdsklfjas kfhjdklsfj skfksajf");
         if (Status.isActive()){
-            System.out.println(Status.isActive() + " active active active ");
-            Game.selectPiece(player, boardRequest.getStart());
-            Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+            //Game.selectPiece(player, boardRequest.getStart());
+            if (boardRequest.getEnd() == 999) {
+                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
+            }
+           else{
+                Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+            }
             Player otherPlayer = getOtherTeam(player);
+            System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
             return returnValue;
         } else {
@@ -185,21 +191,6 @@ public class Game {
     }
 }
 
-//    public StatusResponse status(Player player){
-//        StatusResponse response = new StatusResponse(Status.isActive(), Status.isCheck(), player);
-//        return response;
-//    }
-
-
-//        if (Move.moves.size() % 2 == 1){
-//            player = Game.player1;
-//        } else {
-//            player = Game.player2;
-//        }
-//        if (Move.moves.size() == 0){
-//            player = Game.player1;
-//        }
-//        player = Game.getOtherTeam(player);
 
 
 /*

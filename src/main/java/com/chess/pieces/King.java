@@ -75,7 +75,7 @@ public class King extends Piece {
     **********For cycling through all pieces to prevent King from moving into check or out of checkmate ************
     */
     public int[] canMakeMove() {
-        int[] possibleMoves = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+        int[] possibleMoves = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
         int count = 0;
         int checkX = this.x - 1;
         int checkY = this.y - 1;
@@ -95,17 +95,17 @@ public class King extends Piece {
                     } else {
                         System.out.println("King checking square " + i + "" + j);
                         possibleMoves[count] = i;
-                        count += count + 1;
+                        count = count + 1;
                         possibleMoves[count] = j;
-                        count += count + 1;
+                        count = count + 1;
                         System.out.println("The count is " + count);
                     }
                 } else {
                     System.out.println("Checking square " + i + "" + j);
                     possibleMoves[count] = i;
-                    count += count + 1;
+                    count = count + 1;
                     possibleMoves[count] = j;
-                    count += count + 1;
+                    count = count + 1;
                     System.out.println("The counter is " + count);
                 }
             }

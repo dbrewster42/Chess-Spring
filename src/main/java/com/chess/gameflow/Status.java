@@ -77,7 +77,7 @@ public class Status {
         }
     }
 
-    public static boolean isStalemate(Player player) {
+    public static boolean didStalemate(Player player) {
         String color = "black";
         if (player.isWhite()) {
             color = "white";
@@ -132,7 +132,7 @@ public class Status {
         // return true;
     }
 
-    public static boolean isCheckMate(Player player) {
+    public static boolean didCheckMate(Player player) {
         String color = "black";
         if (player.isWhite()) {
             color = "white";
@@ -173,8 +173,8 @@ public class Status {
             for (int j = 0; j < 8; j++) {
                 if (Board.squares[i][j].hasPiece()) {
                     Piece piece = Board.squares[i][j].getPiece();
-                    if (piece.getColor() == color) {
-                        if (piece.getType() == Type.KING) {
+                    if (piece.getColor().equals(color)) {
+                        if (piece.getType().equals(Type.KING)) {
                             continue;
                         }
                         int blockX = attacker.x;
