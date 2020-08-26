@@ -72,12 +72,13 @@ public class Queen extends Piece {
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
         // System.out.println("MY QUEEN!");
+        System.out.println("from the " + x + "" + y + "to the " + endX + "" + endY);
         int condition1 = Math.abs(endX - x);
         int condition2 = Math.abs(endY - y);
         int checkX, checkY, betweenX, betweenY;
         if (condition1 == 0) {
-            // System.out.println("Travelling horizontally");
             int count = endY - y;
+            System.out.println("Travelling horizontally + count" + count);
             if (count > 0) {
                 checkY = 1;
             } else {

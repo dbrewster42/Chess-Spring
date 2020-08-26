@@ -26,9 +26,9 @@ public class Status {
             return false;
         }
         Player otherTeam = Game.getOtherTeam(player);
-        System.out.println(otherTeam.getName());
+        System.out.println(otherTeam.getName() + " is he in check by the " + piece.getName());
         King king = otherTeam.getKing();
-        System.out.println(king.getName() + king.getColor());
+        //System.out.println(king.getName() + king.getColor());
         int kingX = king.getX();
         int kingY = king.getY();
         if (piece.isValidMove(x, y, kingX, kingY)) {
