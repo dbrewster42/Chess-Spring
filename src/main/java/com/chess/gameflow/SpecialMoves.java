@@ -2,7 +2,6 @@ package com.chess.gameflow;
 
 import com.chess.board.*;
 import com.chess.exceptions.InvalidMoveException;
-import com.chess.models.BoardRequest;
 import com.chess.pieces.*;
 
 import java.util.List;

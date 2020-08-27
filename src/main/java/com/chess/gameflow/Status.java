@@ -31,6 +31,7 @@ public class Status {
         //System.out.println(king.getName() + king.getColor());
         int kingX = king.getX();
         int kingY = king.getY();
+        System.out.println("The opposing king is at square " + kingX + "" + kingY);
         if (piece.isValidMove(x, y, kingX, kingY)) {
             Attacker attacker = Attacker.createAttacker(player, piece, x, y);
             attackers[0] = attacker;

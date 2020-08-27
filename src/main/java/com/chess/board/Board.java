@@ -1,7 +1,7 @@
 package com.chess.board;
 
-import com.chess.models.BoardResponse;
-import com.chess.models.Response;
+import com.chess.models.responses.BoardResponse;
+import com.chess.models.responses.Response;
 import com.chess.pieces.*;
 
 import java.util.ArrayList;

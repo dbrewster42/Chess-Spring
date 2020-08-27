@@ -1,7 +1,6 @@
-package com.chess.models;
+package com.chess.models.responses;
 
 import com.chess.gameflow.Player;
-import com.chess.pieces.Piece;
 
 public class StatusResponse extends Response {
     private boolean active = true;
@@ -12,9 +11,10 @@ public class StatusResponse extends Response {
     //private Piece[] team;
     private boolean isWhite;
 
-//    public StatusResponse(Player player){
-//        this(true, false, player.getName(), player.getTeam());
-//    }
+    public StatusResponse(String message){
+        this.active = false;
+        this.message = message;
+    }
 
     public StatusResponse(boolean active, boolean check, Player player) {
         System.out.println(check + " 12345678 " + player.getName());

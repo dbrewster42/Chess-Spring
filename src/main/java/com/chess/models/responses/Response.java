@@ -1,4 +1,4 @@
-package com.chess.models;
+package com.chess.models.responses;
 
 public abstract class Response {
 }

@@ -8,6 +8,7 @@ public class ErrorResponse {
     private String errReason;
     private String errMessage;
     private String path;
+    //public static List<ErrorResponse> = new ArrayList<ErrorResponse>();
 
 
     public ErrorResponse(int status, String errReason, String errMessage, String path) {
