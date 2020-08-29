@@ -1,7 +1,6 @@
 package com.chess.controller;
 
 import com.chess.board.*;
-import com.chess.exceptions.ErrorResponse;
 import com.chess.gameflow.Game;
 import com.chess.gameflow.Move;
 import com.chess.gameflow.Player;
@@ -20,8 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/game")
 public class Controller {
-    //private boolean isWhite = true;
-    //Player player;
     Game game;
     Board board = Board.boardConstructor();
 

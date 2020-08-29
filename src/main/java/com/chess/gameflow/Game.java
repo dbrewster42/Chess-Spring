@@ -77,16 +77,13 @@ public class Game {
             Piece piece = chosen.getPiece();
             if (player.hasPiece(piece)) {
                 System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
-                //InputReader.preMove(player, x, y, board);
                 return;
             } else {
                 System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
-                //InputReader.preSelect(player, board);
             }
 
         } else {
             System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
-            //InputReader.preSelect(player, board);
         }
     }
 
@@ -143,6 +140,7 @@ public class Game {
             board.getSquare(endX, endY).setPiece(piece);
             //updates King's location if King moved
             if (piece.getType().equals(Type.KING)) {
+                System.out.println("King moving to " + endX + "" + endY);
                 King king = (King) piece;
                 king.setXY(endX, endY);
             }
