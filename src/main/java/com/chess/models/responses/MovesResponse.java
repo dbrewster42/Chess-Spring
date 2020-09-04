@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovesResponse extends Response {
-    private List<Move> moves = new ArrayList<Move>();
+    private List<String> moves = new ArrayList<String>();
 
-    public MovesResponse(List<Move> moves) {
+    public MovesResponse(List<String> moves) {
         this.moves = moves;
     }
 
-    public List<Move> getMoves() {
+    public List<String> getMoves() {
         return moves;
     }
 
-    public void setMoves(List<Move> moves) {
+    public void setMoves(List<String> moves) {
         this.moves = moves;
     }
 }

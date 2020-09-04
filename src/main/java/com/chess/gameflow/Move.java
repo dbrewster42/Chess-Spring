@@ -52,6 +52,14 @@ public class Move {
         System.out.println(" ");
     }
 
+    public static List<String> returnMoveMessages(){
+        List<String> messages = new ArrayList<String>();
+        for (Move i : moves) {
+            messages.add(i.getMessage());
+        }
+        return messages;
+    }
+
     public void addPromoted() {
         promoted = true;
         message += " and is promoted to a QUEEN";

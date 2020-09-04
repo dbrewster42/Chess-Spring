@@ -175,17 +175,18 @@ public class Game {
             //Game.selectPiece(player, boardRequest.getStart());
             if (boardRequest.getEnd() == 999) {
                 SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
-            }
-           else{
+            }else {
                 Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
             System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
             return returnValue;
-        } else {
+        }else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
             returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
+            Board board = Board.boardConstructor();
+            board.generateBoard();
             return returnValue;
         }
     }

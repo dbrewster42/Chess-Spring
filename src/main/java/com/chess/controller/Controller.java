@@ -26,24 +26,12 @@ public class Controller {
 //            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
 //    )
 
-//    @GetMapping
-//    public List<Response> getBoard(){
-//        List<Response> returnValue = board.returnBoard();
-//        return returnValue;
-//    }
-
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
         game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
-        //Player player1 = game.getCurrentTeam(true);
         Player player1= Game.players[0];
-        if (player1 == null){
-            System.out.println("screw your mother's sister's friend's horse!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! People call her ho for short");
-        }
-        //System.out.println(player1.getName() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1);
-        //System.out.println(player1.getName() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ Status.isActive());
         returnValue.add(status);
         return returnValue;
     }
@@ -59,6 +47,9 @@ public class Controller {
 
     @PostMapping("/end")
     public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
+        Status.setActive(false);
+        Board board = Board.boardConstructor();
+        board.generateBoard();
         if (statusRequest.isForfeit()){
             StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
             return statusResponse;
@@ -69,7 +60,7 @@ public class Controller {
 
     @GetMapping("/moves")
     public MovesResponse displayMoves(){
-        MovesResponse movesResponse = new MovesResponse(Move.moves);
+        MovesResponse movesResponse = new MovesResponse(Move.returnMoveMessages());
         return movesResponse;
     }
 }

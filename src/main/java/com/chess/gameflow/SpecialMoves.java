@@ -90,7 +90,7 @@ public class SpecialMoves {
         if (y == 0) {
             Board.squares[x][3].setPiece(piece);
             Board.squares[x][2].setPiece(theKing);
-            king.setXY(x, y);
+            king.setXY(x, 2);
             Board.squares[x][0].setPiece(null);
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a long side castle";
@@ -99,7 +99,7 @@ public class SpecialMoves {
         } else if (y == 7) {
             Board.squares[x][5].setPiece(piece);
             Board.squares[x][6].setPiece(theKing);
-            king.setXY(x, y);
+            king.setXY(x, 6);
             Board.squares[x][7].setPiece(null);
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a short side castle";
