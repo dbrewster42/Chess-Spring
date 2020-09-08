@@ -12,19 +12,38 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomExceptionsHandler extends ResponseEntityExceptionHandler {
-
+    // *********** Original Attempt *************
     @ExceptionHandler(value = InvalidMoveException.class)
     @ResponseBody
-    protected ResponseEntity<Object> resolveInvalidMove(InvalidMoveException e, WebRequest req) throws Exception {
-    //public ErrorResponse resolveInvalidMove(InvalidMoveException e, WebRequest req){
+    protected ResponseEntity<Object> resolveInvalidMove(InvalidMoveException e, WebRequest req) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.EXPECTATION_FAILED.value(),
                 HttpStatus.EXPECTATION_FAILED.getReasonPhrase(),
                 e.getMessage(),
                 req.getDescription(true));
         return handleExceptionInternal(e, errorResponse.toString(), new HttpHeaders(), HttpStatus.EXPECTATION_FAILED, req);
-        //return handleException(e, req);
-        //return errorResponse;
     }
+    // *********** ATTEMPT 2 *************
+//    @ExceptionHandler(value = InvalidMoveException.class)
+//    @ResponseBody
+//    public ErrorResponse resolveInvalidMove(InvalidMoveException e, WebRequest req){
+//        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.EXPECTATION_FAILED.value(),
+//                HttpStatus.EXPECTATION_FAILED.getReasonPhrase(),
+//                e.getMessage(),
+//                req.getDescription(true));
+//        return errorResponse;
+//    }
+    // *********** ATTEMPT 3 *************
+//    @ExceptionHandler(value = InvalidMoveException.class)
+//    @ResponseBody
+//    protected ResponseEntity<Object> resolveInvalidMove(InvalidMoveException e, WebRequest req) throws Exception {
+//        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.EXPECTATION_FAILED.value(),
+//                HttpStatus.EXPECTATION_FAILED.getReasonPhrase(),
+//                e.getMessage(),
+//                req.getDescription(true));
+//        return handleException(e, req);
+//    }
+
+    // *********** ATTEMPT 4 *************
 //    @ExceptionHandler(value = InvalidMoveException.class)
 //    @ResponseBody
 //    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
