@@ -8,14 +8,17 @@ public class ErrorResponse {
     private String errReason;
     private String errMessage;
     private String path;
-    //public static List<ErrorResponse> = new ArrayList<ErrorResponse>();
-
 
     public ErrorResponse(int status, String errReason, String errMessage, String path) {
         this.status = status;
         this.errReason = errReason;
         this.errMessage = errMessage;
         this.path = path;
+    }
+
+    public ErrorResponse(int status, String errMessage){
+        this.status = status;
+        this.errMessage = errMessage;
     }
 
     @Override
