@@ -48,8 +48,7 @@ public class Controller {
     @PostMapping("/end")
     public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
         Status.setActive(false);
-        Board board = Board.boardConstructor();
-        board.generateBoard();
+
         if (statusRequest.isForfeit()){
             StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
             return statusResponse;
@@ -57,6 +56,12 @@ public class Controller {
         StatusResponse statusResponse = new StatusResponse("We have a draw! Good Game!");
         return statusResponse;
     }
+
+//    @PostMapping("/restart")
+//    public StatusResponse restart(){
+//        Board board = Board.boardConstructor();
+//        board.generateBoard();
+//    }
 
     @GetMapping("/moves")
     public MovesResponse displayMoves(){

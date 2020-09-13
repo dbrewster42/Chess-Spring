@@ -5,6 +5,9 @@ import com.chess.pieces.*;
 import com.chess.board.*;
 import com.chess.gameflow.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Status {
     private static boolean active = true;
     private static boolean check = false;
@@ -32,31 +35,68 @@ public class Status {
         int kingX = king.getX();
         int kingY = king.getY();
         System.out.println("The opposing king is at square " + kingX + "" + kingY);
+        //************************************************************************************************************
+        //******************************************************//
         if (piece.isValidMove(x, y, kingX, kingY)) {
-            Attacker attacker = Attacker.createAttacker(player, piece, x, y);
+            Attacker attacker = Attacker.createAttacker(piece, x, y);
             attackers[0] = attacker;
             return true;
         }
         return false;
     }
 
-    public static boolean defeatCheck(Player player, Piece piece, int endX, int endY) {
-        Attacker attacker = attackers[0];
+    public static boolean allChecks(Player player, Piece piece, int endX, int endY){
+        Attacker original = attackers[0];
+        if (!defeatCheck(player, piece, endX, endY, original)){
+            return false;
+        }
+        List<Attacker> allEnemies = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (Board.squares[i][j].hasPiece()) {
+                    Piece enemyPiece = Board.squares[i][j].getPiece();
+                    if (enemyPiece.getColor().equals(piece.getColor())) {
+                        continue;
+                    } else {
+                        Attacker attacker = Attacker.createAttacker(enemyPiece, i, j);
+                        allEnemies.add(attacker);
+                    }
+                }
+            }
+        }
+        System.out.println("WE PRESENT  THE ATTACKERS FOR YOUR PLEASURE. EACH AND EVERYONE. GET READY TO RUMBLE!!!!!!!!!!!!!");
+        for (Attacker each : allEnemies){
+            System.out.println(each.getType() + " at " + each.getX() + "" + each.getY());
+            if (defeatCheck(player, piece, endX, endY, each)){
+                continue;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean defeatCheck(Player player, Piece piece, int endX, int endY, Attacker attacker) {
         //if attacking piece is captured, then check is defeated
         if (endX == attacker.x && endY == attacker.y) {
 //            Board.squares[endX][endY].setPiece(piece);
             return true;
         }
         //if knight then it can only be blocked by moving or capturing
-        else if (attacker.type == Type.KNIGHT) {
-            if (piece.getType() != Type.KING) {
-                return false;
+        else if (attacker == attackers[0]){
+            if (attacker.type == Type.KNIGHT) {
+                if (piece.getType() != Type.KING) {
+                    return false;
+                }
             }
         }
+
         if (piece.getType() == Type.KING) {
             if (attacker.piece.isValidMove(attacker.x, attacker.y, endX, endY)) {
                 return false;
-            } else {
+            }
+            else {
                 return true;
             }
         }

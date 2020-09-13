@@ -111,7 +111,8 @@ public class Game {
             }
             //// Must move out of check if in check
             if (Status.isCheck()) {
-                if (Status.defeatCheck(player, piece, endX, endY)) {
+                //if (Status.defeatCheck(player, piece, endX, endY)) {
+                if (Status.allChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
