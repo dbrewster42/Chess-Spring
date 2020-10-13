@@ -67,7 +67,7 @@ public class Pawn extends Piece {
         // System.out.println(direction);
 
         if (y - endY != 0) {
-            System.out.println("y has changed");
+            System.out.println("Pawn.java: y has changed");
             if (Math.abs(y - endY) == 1) {
                 if (direction == 1){
                     ///capture move

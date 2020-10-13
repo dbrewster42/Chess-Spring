@@ -200,13 +200,14 @@ public class Status {
         /// Checking if king can move
         for (int a = 0; a < 10; a = a + 2) {
             if (possibleMoves[a] == 8) {
-                System.out.println(a + " not here");
+                System.out.println("Status.java 203: " + a + " not here");
                 break;
-            } else if (kingX - possibleMoves[a] == xDirection && kingY - possibleMoves[a + 1] == yDirection) {
-                System.out.println("King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
+           //} else if (kingX - possibleMoves[a] == xDirection && kingY - possibleMoves[a + 1] == yDirection) {
+            } else if (attacker.piece.isValidMove(attacker.x, attacker.y, possibleMoves[a], possibleMoves[a+1])) {
+                System.out.println("Status.java 206: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
                 continue;
             } else {
-                System.out.println("King can move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
+                System.out.println("Status.java 209: King can move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
                 return false;
             }
         }
@@ -214,22 +215,29 @@ public class Status {
             for (int j = 0; j < 8; j++) {
                 if (Board.squares[i][j].hasPiece()) {
                     Piece piece = Board.squares[i][j].getPiece();
+                    System.out.println("Status.java 218: there is a piece at " + i + j + " " + piece.getType());
                     if (piece.getColor().equals(color)) {
                         if (piece.getType().equals(Type.KING)) {
                             continue;
                         }
                         int blockX = attacker.x;
                         int blockY = attacker.y;
-                        while (blockX != i && blockY != j) {
+//                        while (blockX != i && blockY != j) {
+                        while (true) {
                             if (blockX > 7 || blockX < 0 || blockY > 7 || blockY < 0) {
+                                System.out.println("Out of bounds");
+                                break;
+                            }
+                            if (blockX == kingX && blockY == kingY){
+                                System.out.println("End of the line");
                                 break;
                             }
                             System.out.println(
-                                    "Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
+                                    "Status.java 229: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
                             if (piece.isValidMove(i, j, blockX, blockY)) {
                                 System.out.println("Can be blocked by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
-                                System.out.println("Not checkmate");
+                                System.out.println("Status.java 234: Not checkmate");
                                 return false; //is not checkmate
                             }
                             blockX += xDirection;
@@ -240,6 +248,7 @@ public class Status {
                 }
             }
         }
+        System.out.println("Status.java end of didCheckMate(): No Valid Moves. Checkmate!!!!!!!!");
         return true;
     }
 

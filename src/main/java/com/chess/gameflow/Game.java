@@ -151,7 +151,8 @@ public class Game {
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
                 Status.setCheck(true);
-                System.out.println("It should be check" + Status.isCheck());
+                System.out.println("Game.java Check: " + Status.isCheck());
+
                 if (Status.didCheckMate(otherPlayer)) {
                     Status.setCheckMate(true);
                     Status.setActive(false);
@@ -160,7 +161,6 @@ public class Game {
             System.out.println(move.getMessage());
             return;
         } else {
-            //error = true;
             throw new InvalidMoveException("That is not a legal move for a " + piece.getType());
         }
     }
@@ -188,10 +188,7 @@ public class Game {
         }else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
             returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
-            Board board = Board.boardConstructor();
-            board.generateBoard();
-            Move.moves = new ArrayList<>();
-            Status.setActive(true);
+
             return returnValue;
         }
     }

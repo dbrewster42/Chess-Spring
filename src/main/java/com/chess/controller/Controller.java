@@ -1,6 +1,7 @@
 package com.chess.controller;
 
 import com.chess.board.*;
+import com.chess.exceptions.InvalidMoveException;
 import com.chess.gameflow.Game;
 import com.chess.gameflow.Move;
 import com.chess.gameflow.Player;
@@ -9,10 +10,12 @@ import com.chess.models.requests.BoardRequest;
 import com.chess.models.requests.PlayerRequest;
 import com.chess.models.requests.StatusRequest;
 import com.chess.models.responses.MovesResponse;
+
 import com.chess.models.responses.Response;
 import com.chess.models.responses.StatusResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins= "http://localhost:3000", maxAge=7200)
@@ -36,8 +39,14 @@ public class Controller {
         return returnValue;
     }
 
+//    @GetMapping("/players")
+//    public Response getPlayers(){
+//        PlayersResponse returnValue = new PlayersResponse(Game.player1.getName(), Game.player2.getName());
+//        return returnValue;
+//    }
+
     @PostMapping
-    public List<Response> makeMove(@RequestBody BoardRequest boardRequest){
+    public List<Response> makeMove(@RequestBody BoardRequest boardRequest) {
         System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
         StatusResponse status = Game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
@@ -48,7 +57,6 @@ public class Controller {
     @PostMapping("/end")
     public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
         Status.setActive(false);
-
         if (statusRequest.isForfeit()){
             StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
             return statusResponse;
@@ -57,11 +65,18 @@ public class Controller {
         return statusResponse;
     }
 
-//    @PostMapping("/restart")
-//    public StatusResponse restart(){
-//        Board board = Board.boardConstructor();
-//        board.generateBoard();
-//    }
+    @PostMapping("/restart")
+    public List<Response> restart(){
+        game = new Game(Game.player1.getName(), Game.player2.getName());
+        board.generateBoard();
+        Move.moves = new ArrayList<>();
+        Status.setActive(true);
+        List<Response> returnValue = board.returnBoard();
+        Player player1= Game.players[0];
+        StatusResponse status = new StatusResponse(true, false, player1);
+        returnValue.add(status);
+        return returnValue;
+    }
 
     @GetMapping("/moves")
     public MovesResponse displayMoves(){

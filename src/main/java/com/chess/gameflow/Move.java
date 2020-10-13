@@ -44,6 +44,7 @@ public class Move {
     ************** Prints All Moves ****************
     */
     public static void printMoves() {
+        
         int count = 1;
         for (Move i : moves) {
             System.out.println(count + ". " + i.getMessage());
