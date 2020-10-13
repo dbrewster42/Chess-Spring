@@ -75,10 +75,11 @@ public class King extends Piece {
     **********For cycling through all pieces to prevent King from moving into check or out of checkmate ************
     */
     public int[] canMakeMove() {
-        int[] possibleMoves = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+        int[] possibleMoves = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
         int count = 0;
         int checkX = this.x - 1;
         int checkY = this.y - 1;
+        System.out.println("King's location: " + this.x + "" + this.y + " count: " + count);
         for (int i = checkX; i < checkX + 3; i++) {
             if (i < 0 || i > 7) {
                 continue;
@@ -87,25 +88,29 @@ public class King extends Piece {
                 if (j < 0 || j > 7) {
                     continue;
                 }
+                System.out.println("i " + i + " j " + j);
                 if (Board.squares[i][j].hasPiece()) {
-                    if (Board.squares[i][j].getPiece().getColor() == this.color) {
+                    if (Board.squares[i][j].getPiece().getColor().equals(this.color)) {
                         continue;
                     } else {
                         System.out.println("King checking square " + i + "" + j);
                         possibleMoves[count] = i;
-                        count += count + 1;
+                        count = count + 1;
                         possibleMoves[count] = j;
-                        count += count + 1;
+                        count = count + 1;
+                        System.out.println("The count is " + count);
                     }
                 } else {
                     System.out.println("Checking square " + i + "" + j);
                     possibleMoves[count] = i;
-                    count += count + 1;
+                    count = count + 1;
                     possibleMoves[count] = j;
-                    count += count + 1;
+                    count = count + 1;
+                    System.out.println("The counter is " + count);
                 }
             }
         }
+        count = 0;
         return possibleMoves;
     }
 

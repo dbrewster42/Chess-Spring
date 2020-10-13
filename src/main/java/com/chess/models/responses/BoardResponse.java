@@ -1,4 +1,4 @@
-package com.chess.models;
+package com.chess.models.responses;
 
 public class BoardResponse extends Response {
     private int id;

@@ -1,7 +1,7 @@
 package com.chess.board;
 
-import com.chess.models.BoardResponse;
-import com.chess.models.Response;
+import com.chess.models.responses.BoardResponse;
+import com.chess.models.responses.Response;
 import com.chess.pieces.*;
 
 import java.util.ArrayList;
@@ -106,18 +106,15 @@ public class Board {
     }
 
     public List<Response> returnBoard(){
+        //showDetailedBoard();
         List<Response> returnValue = new ArrayList<Response>(64);
-//        BoardResponse[] returnValue = new BoardResponse[64];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 BoardResponse square = new BoardResponse();
-//                String stringID = i + "" + j;
-//                int id = parseInt(stringID);
                 int id = i * 10 + j;
                 square.setId(id);
                 String name = squares[i][j].printPiece();
                 square.setName(name);
-//                returnValue[id] = square;
                 returnValue.add(square);
             }
         }

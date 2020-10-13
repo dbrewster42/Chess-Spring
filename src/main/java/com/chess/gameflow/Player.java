@@ -11,8 +11,8 @@ public class Player {
     //List<Piece> team;
     private boolean isWhite;
 
-    private Player(String playerName, boolean isWhite) {
-        name = playerName;
+    private Player(String name, boolean isWhite) {
+        this.name = name;
         this.isWhite = isWhite;
         if (isWhite) {
             team = createPieces(6);

@@ -2,35 +2,35 @@ package com.chess.controller;
 
 import com.chess.board.*;
 import com.chess.gameflow.Game;
+import com.chess.gameflow.Move;
 import com.chess.gameflow.Player;
 import com.chess.gameflow.Status;
-import com.chess.models.BoardRequest;
-import com.chess.models.PlayerRequest;
-import com.chess.models.Response;
-import com.chess.models.StatusResponse;
+import com.chess.models.requests.BoardRequest;
+import com.chess.models.requests.PlayerRequest;
+import com.chess.models.requests.StatusRequest;
+import com.chess.models.responses.MovesResponse;
+import com.chess.models.responses.Response;
+import com.chess.models.responses.StatusResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins= {"http://localhost:3000"})
+@CrossOrigin(origins= "http://localhost:3000", maxAge=7200)
 @RestController
 @RequestMapping("/game")
 public class Controller {
-    private boolean isWhite = true;
-    Player player;
     Game game;
     Board board = Board.boardConstructor();
 
-//    public Controller(Game game){
-//        this.game = game;
-//    }
-
+//    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
+//            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
+//    )
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
         game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
-        Player player1 = Game.getCurrentTeam(true);
+        Player player1= Game.players[0];
         StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1);
         returnValue.add(status);
         return returnValue;
@@ -38,19 +38,35 @@ public class Controller {
 
     @PostMapping
     public List<Response> makeMove(@RequestBody BoardRequest boardRequest){
-        StatusResponse status = game.run(boardRequest);
+        System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
+        StatusResponse status = Game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
         return returnValue;
     }
-}
-//        Game.selectPiece(player, board, boardRequest.getStart());
-//        Game.movePiece(player, board, boardRequest.getStart(), boardRequest.getEnd());
-    //Game.movePiece(player, boardRequest.getStartX(), boardRequest.getStartY(), board, boardRequest.getEndX());
-//        Player otherPlayer = Game.getOtherTeam(player);
-//        StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
-//    @GetMapping
-//    public StatusResponse getStatus(){
-//
+
+    @PostMapping("/end")
+    public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
+        Status.setActive(false);
+
+        if (statusRequest.isForfeit()){
+            StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
+            return statusResponse;
+        }
+        StatusResponse statusResponse = new StatusResponse("We have a draw! Good Game!");
+        return statusResponse;
+    }
+
+//    @PostMapping("/restart")
+//    public StatusResponse restart(){
+//        Board board = Board.boardConstructor();
+//        board.generateBoard();
 //    }
+
+    @GetMapping("/moves")
+    public MovesResponse displayMoves(){
+        MovesResponse movesResponse = new MovesResponse(Move.returnMoveMessages());
+        return movesResponse;
+    }
+}
 

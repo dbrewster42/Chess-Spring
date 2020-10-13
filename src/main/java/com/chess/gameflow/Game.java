@@ -2,37 +2,45 @@ package com.chess.gameflow;
 
 import com.chess.exceptions.InvalidMoveException;
 import com.chess.exceptions.MustDefeatCheckException;
-import com.chess.models.BoardRequest;
-import com.chess.models.StatusResponse;
+import com.chess.models.requests.BoardRequest;
+import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
+import java.util.ArrayList;
+
 public class Game {
-    public static Player player1, player2;
-//    Board board;
+    public static Player player1;
+    public static Player player2;
+    public static Player[] players = new Player[2];
+    //public static boolean error = false;
+    //Board board;
 
     public Game(String name, String name2){
         //Board board = Board.boardConstructor();
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
+        System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
+        players[0] = player1;
+        players[1] = player2;
     }
 
-    public static Player getCurrentTeam(boolean isWhite){
-        if (isWhite){
-            return player1;
-        } else {
-            return player2;
-        }
-    }
+//    public static Player getCurrentTeam(boolean isWhite){
+//        if (isWhite){
+//            return players[0];
+//        } else {
+//            return players[1];
+//        }
+//    }
 
     /*
      ************** Get other Team ****************
      */
     public static Player getOtherTeam(Player player) {
         if (player.isWhite()) {
-            return player2;
+            return players[1];
         } else {
-            return player1;
+            return players[0];
         }
     }
 
@@ -63,26 +71,21 @@ public class Game {
      ************** Select a Piece ****************
      */
     public static void selectPiece(Player player, int pieceSelection) {
-        //int action = pieceSelection;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
-        System.out.println("X: " + x + " , Y: " + y);
+        //System.out.println("X: " + x + " , Y: " + y);
         Square chosen = Board.squares[x][y];
         if (chosen.hasPiece()) {
             Piece piece = chosen.getPiece();
             if (player.hasPiece(piece)) {
                 System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
-                InputReader.preMove(player, x, y, board);
                 return;
             } else {
                 System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
-                InputReader.preSelect(player, board);
             }
 
         } else {
             System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
-            InputReader.preSelect(player, board);
         }
     }
 
@@ -95,7 +98,7 @@ public class Game {
         Board board = Board.boardConstructor();
         Square initial = Board.squares[x][y];
         Piece piece = initial.getPiece();
-        // System.out.println(action + " " + piece.getName() + " " + initial.getX());
+        System.out.println("Moving the piece from " + pieceSelection + " " + piece.getName() + " to " + action);
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
@@ -108,7 +111,8 @@ public class Game {
             }
             //// Must move out of check if in check
             if (Status.isCheck()) {
-                if (Status.defeatCheck(player, piece, endX, endY)) {
+                //if (Status.defeatCheck(player, piece, endX, endY)) {
+                if (Status.allChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
@@ -139,6 +143,7 @@ public class Game {
             board.getSquare(endX, endY).setPiece(piece);
             //updates King's location if King moved
             if (piece.getType().equals(Type.KING)) {
+                System.out.println("King moving to " + endX + "" + endY);
                 King king = (King) piece;
                 king.setXY(endX, endY);
             }
@@ -146,7 +151,8 @@ public class Game {
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
                 Status.setCheck(true);
-                if (Status.isCheckMate(otherPlayer)) {
+                System.out.println("It should be check" + Status.isCheck());
+                if (Status.didCheckMate(otherPlayer)) {
                     Status.setCheckMate(true);
                     Status.setActive(false);
                 }
@@ -154,42 +160,43 @@ public class Game {
             System.out.println(move.getMessage());
             return;
         } else {
+            //error = true;
             throw new InvalidMoveException("That is not a legal move for a " + piece.getType());
         }
     }
 
 
-    public StatusResponse run(BoardRequest boardRequest){
-        Player player = getCurrentTeam(boardRequest.isWhite());
+    public static StatusResponse run(BoardRequest boardRequest){
+        Player player = players[1];
+        if (boardRequest.isWhite()){
+            System.out.println("Every OTHER");
+            player = players[0];
+        }
+        //System.out.println("hi" + player.getName());
+        //System.out.println(player.getName() + " Game.java ?jdsklfjas kfhjdklsfj skfksajf");
         if (Status.isActive()){
-            Game.selectPiece(player, boardRequest.getStart());
-            Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+            //Game.selectPiece(player, boardRequest.getStart());
+            if (boardRequest.getEnd() == 999) {
+                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
+            }else {
+                Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+            }
             Player otherPlayer = getOtherTeam(player);
+            System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
             return returnValue;
-        } else {
+        }else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
             returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
+            Board board = Board.boardConstructor();
+            board.generateBoard();
+            Move.moves = new ArrayList<>();
+            Status.setActive(true);
             return returnValue;
         }
     }
 }
 
-//    public StatusResponse status(Player player){
-//        StatusResponse response = new StatusResponse(Status.isActive(), Status.isCheck(), player);
-//        return response;
-//    }
-
-
-//        if (Move.moves.size() % 2 == 1){
-//            player = Game.player1;
-//        } else {
-//            player = Game.player2;
-//        }
-//        if (Move.moves.size() == 0){
-//            player = Game.player1;
-//        }
-//        player = Game.getOtherTeam(player);
 
 
 /*

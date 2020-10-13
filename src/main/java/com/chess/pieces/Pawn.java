@@ -60,19 +60,21 @@ public class Pawn extends Piece {
     public boolean isValidMove(int x, int y, int endX, int endY) {
         int direction = endX - x;
         // System.out.println(this.color + this.type + this.name);
-        if (this.name.equals("wPaw")) {
+        if (this.name.equals("wpawn.png")) {
             // System.out.println("WHITIES");
             direction = x - endX;
         }
         // System.out.println(direction);
 
         if (y - endY != 0) {
+            System.out.println("y has changed");
             if (Math.abs(y - endY) == 1) {
-                if (direction == 1)
+                if (direction == 1){
                     ///capture move
                     if (Board.squares[endX][endY].hasPiece()) {
                         return true;
                     }
+                }
             }
             return false;
         }

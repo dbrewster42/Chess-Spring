@@ -1,4 +1,4 @@
-package com.chess.models;
+package com.chess.models.requests;
 
 public class PlayerRequest {
     private String name1;

@@ -35,6 +35,7 @@ public class Move {
         } else {
             message = player.getName() + " has performed a short side castle";
         }
+        System.out.println("Making moves " + piece.getType());
         moves.add(this);
 
     }
@@ -49,6 +50,14 @@ public class Move {
             count++;
         }
         System.out.println(" ");
+    }
+
+    public static List<String> returnMoveMessages(){
+        List<String> messages = new ArrayList<String>();
+        for (Move i : moves) {
+            messages.add(i.getMessage());
+        }
+        return messages;
     }
 
     public void addPromoted() {

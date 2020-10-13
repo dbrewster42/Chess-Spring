@@ -1,16 +1,38 @@
 package com.chess.gameflow;
 
 import com.chess.board.*;
+import com.chess.exceptions.InvalidMoveException;
 import com.chess.pieces.*;
 
 import java.util.List;
 
 public class SpecialMoves {
+    /*
+     ************** Decides which Special Move is applicable ****************
+     */
+    public static void makeSpecialMove(int pieceSelect, Player player){
+        int x = pieceSelect / 10;
+        int y = pieceSelect % 10;
+        Piece piece = Board.squares[x][y].getPiece();
+        if (piece.getType().equals(Type.PAWN)) {
+            if (isValidPassant(player, pieceSelect))
+                doPassant(player, pieceSelect);
+            else throw new InvalidMoveException("This does not meet the en Passant conditions");
+        } else if (piece.getType().equals(Type.ROOK)) {
+            if (isValidCastle(player, pieceSelect))
+                doCastle(player, pieceSelect);
+            else throw new InvalidMoveException("This does not meet valid Castling conditions");
+        } else {
+            throw new InvalidMoveException("Invalid piece selected. Select a Rook to Castle or a Pawn for en Passant");
+        }
+    }
 
     /*
     ************** Checks whether Castling Conditions are Valid ****************
     */
-    public static boolean isValidCastle(Player player, int x, int y, Board gameboard) {
+    public static boolean isValidCastle(Player player, int pieceSelection) {
+        int x = pieceSelection / 10;
+        int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
         if (piece.getType() == Type.ROOK) {
             if (x == 7 || x == 0) {
@@ -58,14 +80,17 @@ public class SpecialMoves {
     /*
     ************** Performs Special Castle Move ****************
     */
-    public static void doCastle(Player player, int x, int y, Board gameboard, List<Move> moves) {
+    public static void doCastle(Player player, int pieceSelection) {
+        List<Move> moves = Move.moves;
+        int x = pieceSelection / 10;
+        int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
         Piece theKing = Board.squares[x][4].getPiece();
         King king = (King) theKing;
         if (y == 0) {
             Board.squares[x][3].setPiece(piece);
             Board.squares[x][2].setPiece(theKing);
-            king.setXY(x, y);
+            king.setXY(x, 2);
             Board.squares[x][0].setPiece(null);
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a long side castle";
@@ -74,7 +99,7 @@ public class SpecialMoves {
         } else if (y == 7) {
             Board.squares[x][5].setPiece(piece);
             Board.squares[x][6].setPiece(theKing);
-            king.setXY(x, y);
+            king.setXY(x, 6);
             Board.squares[x][7].setPiece(null);
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a short side castle";
@@ -85,7 +110,10 @@ public class SpecialMoves {
         }
     }
 
-    public static boolean isValidPassant(Player player, int x, int y, Board gameboard, List<Move> moves) {
+    public static boolean isValidPassant(Player player, int pieceSelection) {
+        List<Move> moves = Move.moves;
+        int x = pieceSelection / 10;
+        int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
         Move lastMove = moves.get(moves.size() - 1);
         int currentX = lastMove.getEndX();
@@ -108,7 +136,10 @@ public class SpecialMoves {
         }
     }
 
-    public static void doPassant(Player player, int x, int y, Board gameboard, List<Move> moves) {
+    public static void doPassant(Player player, int pieceSelection) {
+        List<Move> moves = Move.moves;
+        int x = pieceSelection / 10;
+        int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
         Move lastMove = moves.get(moves.size() - 1);
         int prevX = lastMove.getX();

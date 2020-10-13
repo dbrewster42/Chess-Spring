@@ -1,7 +1,6 @@
-package com.chess.models;
+package com.chess.models.responses;
 
 import com.chess.gameflow.Player;
-import com.chess.pieces.Piece;
 
 public class StatusResponse extends Response {
     private boolean active = true;
@@ -9,20 +8,22 @@ public class StatusResponse extends Response {
     private String message;
     private Player player;
     private String playerName;
-    private Piece[] team;
+    //private Piece[] team;
+    private boolean isWhite;
 
-//    public StatusResponse(Player player){
-//        this(true, false, player.getName(), player.getTeam());
-//    }
+    public StatusResponse(String message){
+        this.active = false;
+        this.message = message;
+    }
 
     public StatusResponse(boolean active, boolean check, Player player) {
+        System.out.println(check + " 12345678 " + player.getName());
         this.active = active;
-//        if (!active){
-//            message = "Game Over";
-//        }
         this.check = check;
         this.playerName = player.getName();
-        this.team = player.getTeam();
+        this.isWhite = player.isWhite();
+        //this.team = player.getTeam();
+        System.out.println(this.check + " 1234567890 " + playerName);
     }
 
     public boolean isActive() {
@@ -57,11 +58,27 @@ public class StatusResponse extends Response {
         this.playerName = playerName;
     }
 
-    public Piece[] getTeam() {
-        return team;
+//    public Piece[] getTeam() {
+//        return team;
+//    }
+//
+//    public void setTeam(Piece[] team) {
+//        this.team = team;
+//    }
+
+    public boolean isWhite() {
+        return isWhite;
     }
 
-    public void setTeam(Piece[] team) {
-        this.team = team;
+    public void setWhite(boolean white) {
+        isWhite = white;
     }
+
+//    public Player getPlayer() {
+//        return player;
+//    }
+//
+//    public void setPlayer(Player player) {
+//        this.player = player;
+//    }
 }
