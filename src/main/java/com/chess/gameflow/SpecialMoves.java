@@ -23,6 +23,10 @@ public class SpecialMoves {
                 doCastle(player, pieceSelect);
             else throw new InvalidMoveException("This does not meet valid Castling conditions");
         } else {
+            if (piece.getType().equals(Type.KING)){
+                throw new InvalidMoveException("Invalid Piece Selection. Please select a ROOK if you wish to castle");
+            }
+
             throw new InvalidMoveException("Invalid piece selected. Select a Rook to Castle or a Pawn for en Passant");
         }
     }
@@ -95,7 +99,7 @@ public class SpecialMoves {
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a long side castle";
             Move move = new Move(player, piece, x, y, x, 3, true);
-            moves.add(move);
+            //moves.add(move);
         } else if (y == 7) {
             Board.squares[x][5].setPiece(piece);
             Board.squares[x][6].setPiece(theKing);
@@ -104,7 +108,7 @@ public class SpecialMoves {
             Board.squares[x][4].setPiece(null);
             // String move = player.getName() + " has performed a short side castle";
             Move move = new Move(player, piece, x, y, x, 5, true);
-            moves.add(move);
+            //moves.add(move);
         } else {
             System.out.println("Wow you are tricky");
         }

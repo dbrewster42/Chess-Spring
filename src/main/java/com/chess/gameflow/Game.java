@@ -7,14 +7,11 @@ import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
-import java.util.ArrayList;
 
 public class Game {
     public static Player player1;
     public static Player player2;
     public static Player[] players = new Player[2];
-    //public static boolean error = false;
-    //Board board;
 
     public Game(String name, String name2){
         //Board board = Board.boardConstructor();
@@ -151,7 +148,8 @@ public class Game {
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
                 Status.setCheck(true);
-                System.out.println("It should be check" + Status.isCheck());
+                System.out.println("Game.java Check: " + Status.isCheck());
+
                 if (Status.didCheckMate(otherPlayer)) {
                     Status.setCheckMate(true);
                     Status.setActive(false);
@@ -160,7 +158,6 @@ public class Game {
             System.out.println(move.getMessage());
             return;
         } else {
-            //error = true;
             throw new InvalidMoveException("That is not a legal move for a " + piece.getType());
         }
     }
@@ -188,10 +185,7 @@ public class Game {
         }else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
             returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
-            Board board = Board.boardConstructor();
-            board.generateBoard();
-            Move.moves = new ArrayList<>();
-            Status.setActive(true);
+
             return returnValue;
         }
     }

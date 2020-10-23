@@ -98,15 +98,15 @@ public class King extends Piece {
                         count = count + 1;
                         possibleMoves[count] = j;
                         count = count + 1;
-                        System.out.println("The count is " + count);
+                        System.out.println("King.java: The count is " + count);
                     }
                 } else {
-                    System.out.println("Checking square " + i + "" + j);
+                    System.out.println("King.java: Checking square " + i + "" + j);
                     possibleMoves[count] = i;
                     count = count + 1;
                     possibleMoves[count] = j;
                     count = count + 1;
-                    System.out.println("The counter is " + count);
+                    System.out.println("King.java: The counter is " + count);
                 }
             }
         }

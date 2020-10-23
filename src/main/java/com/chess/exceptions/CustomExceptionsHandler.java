@@ -11,24 +11,34 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 //@ControllerAdvice
 public class CustomExceptionsHandler extends ResponseEntityExceptionHandler {
 
+//    @ExceptionHandler(value = InvalidMoveException.class)
+//    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+//    public ResponseEntity<Object> resolveInvalidMove(InvalidMoveException e, WebRequest req) {
+//    //public ErrorResponse resolveInvalidMove(InvalidMoveException e, WebRequest req){
+//        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.EXPECTATION_FAILED.value(),
+//                HttpStatus.EXPECTATION_FAILED.getReasonPhrase(),
+//                e.getMessage(),
+//                req.getDescription(true));
+//        return handleExceptionInternal(e, errorResponse, new HttpHeaders(), HttpStatus.EXPECTATION_FAILED, req);
+//        //return handleMethodArgumentNotValid(e, new HttpHeaders(), HttpStatus.EXPECTATION_FAILED,  )
+//        //return handleException(e, req);
+//        //return errorResponse;
+//    }
     @ExceptionHandler(value = InvalidMoveException.class)
-    //@ResponseBody
-    public ResponseEntity<Object> resolveInvalidMove(InvalidMoveException e, WebRequest req) {
-    //public ErrorResponse resolveInvalidMove(InvalidMoveException e, WebRequest req){
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    public ErrorResponse resolveInvalidMove(InvalidMoveException e, WebRequest req) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.EXPECTATION_FAILED.value(),
                 HttpStatus.EXPECTATION_FAILED.getReasonPhrase(),
                 e.getMessage(),
                 req.getDescription(true));
-        return handleExceptionInternal(e, errorResponse.toString(), new HttpHeaders(), HttpStatus.EXPECTATION_FAILED, req);
-        //return handleMethodArgumentNotValid(e, new HttpHeaders(), HttpStatus.EXPECTATION_FAILED,  )
-        //return handleException(e, req);
-        //return errorResponse;
+        return errorResponse;
     }
 //    @ExceptionHandler(value = InvalidMoveException.class)
 //    @ResponseBody
 //    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
 //    public ErrorResponse resolveInvalidMove(InvalidMoveException e){
 //        return new ErrorResponse(417, e.getMessage());
+
 //    }
 
     @ExceptionHandler(value = MustDefeatCheckException.class)
