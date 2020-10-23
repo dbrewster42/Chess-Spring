@@ -44,12 +44,7 @@ public class Status {
         }
         return false;
     }
-
-    public static boolean allChecks(Player player, Piece piece, int endX, int endY){
-        Attacker original = attackers[0];
-        if (!defeatCheck(player, piece, endX, endY, original)){
-            return false;
-        }
+    public static List<Attacker> allEnemies(Piece piece){
         List<Attacker> allEnemies = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -64,6 +59,29 @@ public class Status {
                 }
             }
         }
+        return allEnemies;
+    }
+
+    public static boolean allChecks(Player player, Piece piece, int endX, int endY){
+        Attacker original = attackers[0];
+        if (!defeatCheck(player, piece, endX, endY, original)){
+            return false;
+        }
+        List<Attacker> allEnemies = allEnemies(piece);
+//        List<Attacker> allEnemies = new ArrayList<>();
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                if (Board.squares[i][j].hasPiece()) {
+//                    Piece enemyPiece = Board.squares[i][j].getPiece();
+//                    if (enemyPiece.getColor().equals(piece.getColor())) {
+//                        continue;
+//                    } else {
+//                        Attacker attacker = Attacker.createAttacker(enemyPiece, i, j);
+//                        allEnemies.add(attacker);
+//                    }
+//                }
+//            }
+//        }
         System.out.println("WE PRESENT  THE ATTACKERS FOR YOUR PLEASURE. EACH AND EVERYONE. GET READY TO RUMBLE!!!!!!!!!!!!!");
         for (Attacker each : allEnemies){
             System.out.println(each.getType() + " at " + each.getX() + "" + each.getY());
@@ -75,6 +93,7 @@ public class Status {
         }
 
         return true;
+        //true means not checkmate
     }
 
     public static boolean defeatCheck(Player player, Piece piece, int endX, int endY, Attacker attacker) {
@@ -197,25 +216,29 @@ public class Status {
         } else if (attacker.y - kingY < 0) {
             yDirection = 1;
         }
+        List<Integer> narrowedMoves = new ArrayList<>();
         /// Checking if king can move
         for (int a = 0; a < 10; a = a + 2) {
             if (possibleMoves[a] == 8) {
-                System.out.println("Status.java 203: " + a + " not here");
+                System.out.println("Status.java 223: " + a + " not here");
                 break;
            //} else if (kingX - possibleMoves[a] == xDirection && kingY - possibleMoves[a + 1] == yDirection) {
             } else if (attacker.piece.isValidMove(attacker.x, attacker.y, possibleMoves[a], possibleMoves[a+1])) {
-                System.out.println("Status.java 206: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
+                System.out.println("Status.java 227: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
                 continue;
+
             } else {
-                System.out.println("Status.java 209: King can move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
-                return false;
+                System.out.println("Status.java 231: King can possibly move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
+                narrowedMoves.add(possibleMoves[a]);
+                narrowedMoves.add(possibleMoves[a + 1]);
+                //return false;
             }
         }
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (Board.squares[i][j].hasPiece()) {
                     Piece piece = Board.squares[i][j].getPiece();
-                    System.out.println("Status.java 218: there is a piece at " + i + j + " " + piece.getType());
+                    System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
                     if (piece.getColor().equals(color)) {
                         if (piece.getType().equals(Type.KING)) {
                             continue;
@@ -233,20 +256,35 @@ public class Status {
                                 break;
                             }
                             System.out.println(
-                                    "Status.java 229: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
+                                    "Status.java 259: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
                             if (piece.isValidMove(i, j, blockX, blockY)) {
                                 System.out.println("Can be blocked by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
-                                System.out.println("Status.java 234: Not checkmate");
+                                System.out.println("Status.java 263: Not checkmate");
                                 return false; //is not checkmate
                             }
                             blockX += xDirection;
                             blockY += yDirection;
                         }
 
+                    } else {
+                        for (int n =0; n< narrowedMoves.size(); n+=2){
+                            if (piece.isValidMove(i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
+                                narrowedMoves.remove(n);
+                                narrowedMoves.remove(n +1);
+                            }
+                        }
+
                     }
                 }
             }
+        }
+        if (narrowedMoves.size() > 0){
+            System.out.println("Status.java 283: Not checkmate. King can move to " + narrowedMoves.get(0) + narrowedMoves.get(1));
+            if (narrowedMoves.size() > 2){
+                System.out.println("plus other moves are open");
+            }
+            return false;
         }
         System.out.println("Status.java end of didCheckMate(): No Valid Moves. Checkmate!!!!!!!!");
         return true;
