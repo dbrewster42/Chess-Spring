@@ -7,14 +7,11 @@ import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
-import java.util.ArrayList;
 
 public class Game {
     public static Player player1;
     public static Player player2;
     public static Player[] players = new Player[2];
-    //public static boolean error = false;
-    //Board board;
 
     public Game(String name, String name2){
         //Board board = Board.boardConstructor();

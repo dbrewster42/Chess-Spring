@@ -270,8 +270,8 @@ public class Status {
                     } else {
                         for (int n =0; n< narrowedMoves.size(); n+=2){
                             if (piece.isValidMove(i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
-                                narrowedMoves.remove(n);
                                 narrowedMoves.remove(n +1);
+                                narrowedMoves.remove(n);
                             }
                         }
 
