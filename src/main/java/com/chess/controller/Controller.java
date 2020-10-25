@@ -48,7 +48,7 @@ public class Controller {
 
     @PostMapping
     public List<Response> makeMove(@RequestBody BoardRequest boardRequest) {
-        System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
+        //System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
         StatusResponse status = Game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
@@ -68,12 +68,13 @@ public class Controller {
 
     @PostMapping("/restart")
     public List<Response> restart(){
+        Status.setCheckMate(false);
+        Status.setActive(true);
         String name1 = Game.players[0].getName();
         String name2 = Game.players[1].getName();
         game = new Game(name1, name2);
         board.generateBoard();
         Move.moves = new ArrayList<>();
-        Status.setActive(true);
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
         StatusResponse status = new StatusResponse(true, false, player1);

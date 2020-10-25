@@ -85,7 +85,7 @@ public class SpecialMoves {
     ************** Performs Special Castle Move ****************
     */
     public static void doCastle(Player player, int pieceSelection) {
-        List<Move> moves = Move.moves;
+        //List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
