@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class Move {
     private int x, y, endX, endY;
+    private char boardY, boardEndY;
+    private int boardX, boardEndX;
     public boolean capture = false;
     public boolean promoted = false;
     public boolean checking = false;
@@ -26,16 +28,20 @@ public class Move {
         this.player = player;
         this.piece = piece;
         this.x = x;
+        boardX = x + 1;
         this.y = y;
+        boardY = getColumn(y);
         this.endX = endX;
+        boardEndX = endX + 1;
         this.endY = endY;
+        boardEndY = getColumn(endY);
         this.castle = castle;
         if (y == 0) {
             message = player.getName() + " has performed a long side castle";
         } else {
             message = player.getName() + " has performed a short side castle";
         }
-        System.out.println("Making moves " + piece.getType());
+        //System.out.println("Making moves " + piece.getType());
         moves.add(this);
 
     }
@@ -53,12 +59,22 @@ public class Move {
         System.out.println(" ");
     }
 
+    public char getColumn(int y){
+        String column =  "abcdefgh";
+        char returnValue = column.charAt(y);
+        return returnValue;
+    }
+
     public static List<String> returnMoveMessages(){
         List<String> messages = new ArrayList<String>();
         for (Move i : moves) {
             messages.add(i.getMessage());
         }
         return messages;
+    }
+
+    public void addCheckmate(){
+        message += " CHECKMATE! " + player.getName() + " wins!!!!!";
     }
 
     public void addPromoted() {
@@ -73,7 +89,7 @@ public class Move {
     public void addCapture(Piece capturedPiece) {
         capture = true;
         this.capturedPiece = capturedPiece;
-        message = message + " and has captured a " + capturedPiece.getType() + "!";
+        message = message + " and has captured a " + capturedPiece.getType();
     }
 
     public void addCheck() {
@@ -83,8 +99,8 @@ public class Move {
     }
 
     public String makeMessage() {
-        String message = player.getName() + "'s " + piece.getType() + " has moved from " + x + "" + y + " to " + endX
-                + "" + endY;
+        String message = player.getName() + "'s " + piece.getType() + " has moved from " + boardY + boardX + " to " + boardEndY
+                 + boardEndX;
         return message;
     }
 

@@ -43,6 +43,7 @@ public class King extends Piece {
     */
     // @Override
     public void setXY(int x, int y) {
+        System.out.println("King changing location to " + x + y);
         this.x = x;
         this.y = y;
     }

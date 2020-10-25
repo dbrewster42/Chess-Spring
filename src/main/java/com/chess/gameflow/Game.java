@@ -95,7 +95,11 @@ public class Game {
         Board board = Board.boardConstructor();
         Square initial = Board.squares[x][y];
         Piece piece = initial.getPiece();
+        //King king = player.getKing();
         System.out.println("Moving the piece from " + pieceSelection + " " + piece.getName() + " to " + action);
+        System.out.println("");
+        System.out.println("");
+        //System.out.println("The King is at " + king.getX() + king.getY());
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
@@ -138,12 +142,15 @@ public class Game {
             //moves from old spot ///moves to new spot
             Board.squares[x][y].setPiece(null);
             board.getSquare(endX, endY).setPiece(piece);
+
             //updates King's location if King moved
             if (piece.getType().equals(Type.KING)) {
                 System.out.println("King moving to " + endX + "" + endY);
-                King king = (King) piece;
+                //King king = (King) piece;
+                King king = player.getKing();
                 king.setXY(endX, endY);
             }
+            System.out.println(player.getName() + "'s King is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
@@ -151,6 +158,7 @@ public class Game {
                 System.out.println("Game.java Check: " + Status.isCheck());
 
                 if (Status.didCheckMate(otherPlayer)) {
+                    move.addCheckmate();
                     Status.setCheckMate(true);
                     Status.setActive(false);
                 }
@@ -170,7 +178,7 @@ public class Game {
             player = players[0];
         }
         //System.out.println("hi" + player.getName());
-        //System.out.println(player.getName() + " Game.java ?jdsklfjas kfhjdklsfj skfksajf");
+        //System.out.println(player.getName() + " Game.java");
         if (Status.isActive()){
             //Game.selectPiece(player, boardRequest.getStart());
             if (boardRequest.getEnd() == 999) {
