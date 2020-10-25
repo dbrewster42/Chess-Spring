@@ -69,6 +69,7 @@ public class Controller {
     @PostMapping("/restart")
     public List<Response> restart(){
         Status.setCheckMate(false);
+        Status.setCheck(false);
         Status.setActive(true);
         String name1 = Game.players[0].getName();
         String name2 = Game.players[1].getName();
