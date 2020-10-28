@@ -8,4 +8,4 @@ To Do-
 3. add sockets to communicate with multiple clients simulatenously
 4. publicly deploy
 5. add undo
-6. polish castle rules
+6. bug with restarting game
