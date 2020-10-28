@@ -10,7 +10,6 @@ public class King extends Piece {
     private int y;
 
     public King(String color, int x, int y) {
-        // protected King(String color) {
         this.color = color;
         this.x = x;
         this.y = y;
@@ -46,6 +45,7 @@ public class King extends Piece {
         System.out.println("King changing location to " + x + y);
         this.x = x;
         this.y = y;
+        System.out.println("The King's location is now " + this.x + this.y);
     }
 
     /*

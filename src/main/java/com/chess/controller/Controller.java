@@ -31,8 +31,8 @@ public class Controller {
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
-        game = new Game(request.getName1(), request.getName2());
         board.generateBoard();
+        game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
         StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1);
@@ -71,6 +71,7 @@ public class Controller {
         Status.setCheckMate(false);
         Status.setCheck(false);
         Status.setActive(true);
+        Move.moves = new ArrayList<>();
         String name1 = Game.players[0].getName();
         String name2 = Game.players[1].getName();
         game = new Game(name1, name2);

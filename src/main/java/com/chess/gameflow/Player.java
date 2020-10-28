@@ -3,12 +3,12 @@ package com.chess.gameflow;
 import com.chess.pieces.*;
 import com.chess.board.Board;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
     private String name;
-    Piece[] team;
-    //List<Piece> team;
+    List<Piece> team;
     private boolean isWhite;
 
     private Player(String name, boolean isWhite) {
@@ -25,7 +25,6 @@ public class Player {
      ************** Initialization of Players ****************
      */
     public static Player createPlayer(String name, boolean isWhite) {
-
         Player player = new Player(name, isWhite);
         if (isWhite) {
             System.out.println("I have heard of you " + name
@@ -39,17 +38,14 @@ public class Player {
     /*
      ************** Initialization of All Pieces ****************
      */
-    public static Piece[] createPieces(int start) {
-        Piece[] team = new Piece[16];
-        //List<Piece> team = new ArrayList<Piece>(16);
-        int count = 0;
-        int end = start + 2;
-        for (int i = start; i < end; i++) {
+    public static List<Piece> createPieces(int start) {
+        List<Piece> team = new ArrayList<Piece>(16);
+        //int end = start + 2;
+        for (int i = start; i < start + 2; i++) {
             for (int j = 0; j < 8; j++) {
-                // System.out.println(Board.squares[i][j].printPiece() + " :" + count + " " + start + " " + end);
-                //team.add(Board.squares[i][j].getPiece());
-                team[count] = Board.squares[i][j].getPiece();
-                count++;
+                //System.out.println("1 " + Integer.toHexString(System.identityHashCode(Board.squares[i][j].getPiece())));
+                team.add(Board.squares[i][j].getPiece());
+                //System.out.println("2 " + Integer.toHexString(System.identityHashCode(team.get(team.size()-1))));
             }
         }
         return team;
@@ -72,14 +68,14 @@ public class Player {
     /*
      **********Returns current team ************
      */
-    public Piece[] getTeam() {
+    public List<Piece> getTeam() {
         return team;
     }
 
     /*
      **********Sets current team ************
      */
-    public void setTeam(Piece[] updatedTeam) {
+    public void setTeam(List<Piece> updatedTeam) {
         team = updatedTeam;
     }
 
@@ -87,26 +83,30 @@ public class Player {
      **********Retrieves King ************
      */
     public King getKing() {
-        Piece theKing = Arrays.stream(team).filter(x -> x != null).filter(x -> x.getType() == Type.KING).findFirst()
-                .orElse(null);
+        Piece theKing = team.stream().filter(x -> x.getType().equals(Type.KING)).findFirst().orElse(null);
         return (King) theKing;
-//        return king;
+        //Piece theKing = Arrays.stream(team).filter(x -> x != null).filter(x -> x.getType().equals(Type.KING)).findFirst().orElse(null);
+//        if (this.isWhite){
+//            king = (King) team[12];
+//        } else {
+//            king = (King) team[4];
+//        }
     }
 
     /*
      ************** Counts all Pieces for Draw ****************
      */
-    public int pieceCount() {
-        int count = 0;
-        for (Piece i : team) {
-            if (i == null)
-                continue;
-            else {
-                count = count + 1;
-            }
-        }
-        return count;
-    }
+//    public int pieceCount() {
+//        int count = 0;
+//        for (Piece i : team) {
+//            if (i == null)
+//                continue;
+//            else {
+//                count = count + 1;
+//            }
+//        }
+//        return count;
+//    }
 
     /*
      ************** Prints Your Team's Available Pieces by Type with a Count ****************
@@ -117,10 +117,7 @@ public class Player {
         int rookCount = 0;
         int knightCount = 0;
         int bishopCount = 0;
-        // System.out.println("crickets");
         for (Piece i : team) {
-            if (i == null)
-                continue;
             if (i.getType() == Type.BISHOP)
                 bishopCount++;
             if (i.getType() == Type.QUEEN)
@@ -138,41 +135,25 @@ public class Player {
         System.out.println("Knight: " + knightCount);
         System.out.println("Bishop: " + bishopCount);
         System.out.println("Pawn: " + pawnCount);
-
     }
 
     /*
      **********Restores captured piece to team for Memento************
      */
     public void restorePiece(Piece piece) {
-        int count = 0;
-        for (Piece candidate : team) {
-            if (candidate == null) {
-                team[count] = piece;
-                break;
-            }
-            count = count + 1;
-        }
+        team.add(piece);
     }
 
     /*
      **********Removes captured piece from team ************
      */
     public void killPiece(Piece piece) {
-        int count = 0;
-        for (Piece candidate : team) {
-            if (candidate == null) {
-                count++;
-                continue;
-            }
-            if (candidate.getType().equals(piece.getType())) {
-                // System.out.println(candidate.getName() + " is here!");
-                team[count] = null;
-                break;
-            }
-            count++;
-        }
-        // return team;
+        team.remove(piece);
+//        for (Piece candidate : team) {
+//            if (candidate.getType().equals(piece.getType())) {
+//                team.remove(piece);
+//            }
+//        }
     }
 
     /*
@@ -186,17 +167,12 @@ public class Player {
             color = "black";
         }
         Queen queen = new Queen(color);
-        int count = 0;
         for (Piece candidate : team) {
-            if (candidate == null) {
-                continue;
-            }
             if (candidate.getType().equals(Type.PAWN)) {
+                candidate = queen;
                 break;
             }
-            count++;
         }
-        team[count] = queen;
         piece = queen;
         return piece;
     }
@@ -205,18 +181,7 @@ public class Player {
      **********lambda stream that checks to see if the selected piece belongs to the current team ************
      */
     public boolean hasPiece(Piece piece) {
-        return Arrays.stream(team).filter(x -> x != null).anyMatch(p -> p.getName().equals(piece.getName()));
-//        return Arrays.stream(team).filter(x -> x != null).anyMatch(p -> Objects.equals(piece, p));
+        return team.stream().anyMatch(p -> p.getName().equals(piece.getName()));
+        //return Arrays.stream(team).filter(x -> x != null).anyMatch(p -> p.getName().equals(piece.getName()));
     }
-//        lambdaContains doIt = team -> {
-//            boolean result = Arrays.stream(team).filter(x -> x != null)
-//                    .anyMatch(x -> x.getName().equals(piece.getName()));
-//            return result;
-//        };
-//        return doIt.doesHave(team);
-//    }
-//
-//    interface lambdaContains {
-//        boolean doesHave(Piece[] team);
-//
 }

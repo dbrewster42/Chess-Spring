@@ -35,6 +35,9 @@ public class SpecialMoves {
     ************** Checks whether Castling Conditions are Valid ****************
     */
     public static boolean isValidCastle(Player player, int pieceSelection) {
+        if (Status.isCheck()) {
+            throw new InvalidMoveException("You cannot Castle while in check");
+        }
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
@@ -90,7 +93,7 @@ public class SpecialMoves {
         int y = pieceSelection % 10;
         Piece piece = Board.squares[x][y].getPiece();
         Piece theKing = Board.squares[x][4].getPiece();
-        King king = (King) theKing;
+        King king = player.getKing();
         if (y == 0) {
             Board.squares[x][3].setPiece(piece);
             Board.squares[x][2].setPiece(theKing);
@@ -112,6 +115,7 @@ public class SpecialMoves {
         } else {
             System.out.println("Wow you are tricky");
         }
+        System.out.println("SpecialMoves.java " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
     }
 
     public static boolean isValidPassant(Player player, int pieceSelection) {
