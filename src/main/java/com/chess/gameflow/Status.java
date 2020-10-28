@@ -29,12 +29,12 @@ public class Status {
             return false;
         }
         Player otherTeam = Game.getOtherTeam(player);
-        System.out.println(otherTeam.getName() + " is he in check by the " + piece.getName());
+        //System.out.println(otherTeam.getName() + " is he in check by the " + piece.getName());
         King king = otherTeam.getKing();
         //System.out.println(king.getName() + king.getColor());
         int kingX = king.getX();
         int kingY = king.getY();
-        System.out.println("The opposing king is at square " + kingX + "" + kingY);
+        System.out.println("Status.didCheck() - The opposing king is at square " + kingX + kingY);
         //************************************************************************************************************
         //******************************************************//
         if (piece.isValidMove(x, y, kingX, kingY)) {
@@ -61,37 +61,21 @@ public class Status {
         }
         return allEnemies;
     }
-
+    //false means did not beat check
     public static boolean allChecks(Player player, Piece piece, int endX, int endY){
         Attacker original = attackers[0];
         if (!defeatCheck(player, piece, endX, endY, original)){
             return false;
         }
         List<Attacker> allEnemies = allEnemies(piece);
-//        List<Attacker> allEnemies = new ArrayList<>();
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                if (Board.squares[i][j].hasPiece()) {
-//                    Piece enemyPiece = Board.squares[i][j].getPiece();
-//                    if (enemyPiece.getColor().equals(piece.getColor())) {
-//                        continue;
-//                    } else {
-//                        Attacker attacker = Attacker.createAttacker(enemyPiece, i, j);
-//                        allEnemies.add(attacker);
-//                    }
-//                }
-//            }
-//        }
-        System.out.println("WE PRESENT  THE ATTACKERS FOR YOUR PLEASURE. EACH AND EVERYONE. GET READY TO RUMBLE!!!!!!!!!!!!!");
         for (Attacker each : allEnemies){
-            System.out.println(each.getType() + " at " + each.getX() + "" + each.getY());
+            System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
             if (defeatCheck(player, piece, endX, endY, each)){
                 continue;
             } else {
                 return false;
             }
         }
-
         return true;
         //true means not checkmate
     }
@@ -216,8 +200,10 @@ public class Status {
         } else if (attacker.y - kingY < 0) {
             yDirection = 1;
         }
+        Board.squares[kingX][kingY].setPiece(null);
         List<Integer> narrowedMoves = new ArrayList<>();
         /// Checking if king can move
+        /////////NEED TO SET KING TO NULL SO HE DOESN"T BLOCK VALID MOVE THAT IS STILL IN CHECK
         for (int a = 0; a < 10; a = a + 2) {
             if (possibleMoves[a] == 8) {
                 System.out.println("Status.java 223: " + a + " not here");
@@ -234,6 +220,7 @@ public class Status {
                 //return false;
             }
         }
+        Board.squares[kingX][kingY].setPiece(king);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (Board.squares[i][j].hasPiece()) {

@@ -7,6 +7,8 @@ import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
+import java.util.List;
+
 
 public class Game {
     public static Player player1;
@@ -90,6 +92,7 @@ public class Game {
      ************** Move Your Piece ****************
      */
     public static void movePiece(Player player, int pieceSelection, int action) {
+        //debugs(player);
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Board board = Board.boardConstructor();
@@ -117,8 +120,8 @@ public class Game {
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
-                    System.out.println("Invalid move. You must move out of check!");
-                    throw new MustDefeatCheckException("Invalid move. You must move out of check!");
+                    //System.out.println("Invalid move. You must move out of check!");
+                    throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
             }
             Type type = piece.getType();
@@ -145,12 +148,19 @@ public class Game {
 
             //updates King's location if King moved
             if (piece.getType().equals(Type.KING)) {
-                System.out.println("King moving to " + endX + "" + endY);
-                //King king = (King) piece;
+                //System.out.println("King moving to " + endX + endY);
+                King theKing = (King) piece;
                 King king = player.getKing();
                 king.setXY(endX, endY);
+//                System.out.println();
+//                System.out.println(Integer.toHexString(System.identityHashCode(piece)));
+//                System.out.println(Integer.toHexString(System.identityHashCode(king)));
+//                System.out.println(Integer.toHexString(System.identityHashCode(theKing)));
+//                System.out.println();
+                //debugs(player);
+                System.out.println("Game.java King moved to " + king.getX() + king.getY());
             }
-            System.out.println(player.getName() + "'s King is at " + player.getKing().getX() + player.getKing().getY());
+            System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
             if (Status.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
@@ -164,17 +174,41 @@ public class Game {
                 }
             }
             System.out.println(move.getMessage());
+//            King king = player.getKing();
+//            System.out.println("King moved to " + king.getX() + king.getY());
             return;
         } else {
             throw new InvalidMoveException("That is not a legal move for a " + piece.getType());
         }
     }
 
-
+    public static void debugs(Player player){
+        System.out.println();
+        int count = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (Board.squares[i][j].hasPiece()) {
+                    Piece newPiece = Board.squares[i][j].getPiece();
+                    System.out.println(count + " " + Integer.toHexString(System.identityHashCode(newPiece)));
+                    count++;
+                }
+            }
+        }
+        count = 0;
+        List<Piece> myTeam = player.getTeam();
+        for (Piece i : myTeam){
+            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
+        }
+        Player otherPlayer = getOtherTeam(player);
+        List<Piece> yourTeam = otherPlayer.getTeam();
+        for (Piece i : yourTeam){
+            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
+        }
+        System.out.println();
+    }
     public static StatusResponse run(BoardRequest boardRequest){
         Player player = players[1];
         if (boardRequest.isWhite()){
-            System.out.println("Every OTHER");
             player = players[0];
         }
         //System.out.println("hi" + player.getName());
