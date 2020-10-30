@@ -7,8 +7,6 @@ import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
-import java.util.List;
-
 
 public class Game {
     public static Player player1;
@@ -66,42 +64,38 @@ public class Game {
         }
     }
 
-    /*
-     ************** Select a Piece ****************
-     */
-    public static void selectPiece(Player player, int pieceSelection) {
-        int x = pieceSelection / 10;
-        int y = pieceSelection % 10;
-        //System.out.println("X: " + x + " , Y: " + y);
-        Square chosen = Board.squares[x][y];
-        if (chosen.hasPiece()) {
-            Piece piece = chosen.getPiece();
-            if (player.hasPiece(piece)) {
-                System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
-                return;
-            } else {
-                System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
-            }
-
-        } else {
-            System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
-        }
-    }
+//    /*
+//     ************** Select a Piece ****************
+//     */
+//    public static void selectPiece(Player player, int pieceSelection) {
+//        int x = pieceSelection / 10;
+//        int y = pieceSelection % 10;
+//        //System.out.println("X: " + x + " , Y: " + y);
+//        Square chosen = Board.squares[x][y];
+//        if (chosen.hasPiece()) {
+//            Piece piece = chosen.getPiece();
+//            if (player.hasPiece(piece)) {
+//                System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
+//                return;
+//            } else {
+//                System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
+//            }
+//
+//        } else {
+//            System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
+//        }
+//    }
 
     /*
      ************** Move Your Piece ****************
      */
     public static void movePiece(Player player, int pieceSelection, int action) {
-        //debugs(player);
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Board board = Board.boardConstructor();
         Square initial = Board.squares[x][y];
         Piece piece = initial.getPiece();
-        //King king = player.getKing();
         System.out.println("Moving the piece from " + pieceSelection + " " + piece.getName() + " to " + action);
-        System.out.println("");
-        System.out.println("");
         //System.out.println("The King is at " + king.getX() + king.getY());
         int endX = action / 10;
         int endY = action % 10;
@@ -116,14 +110,19 @@ public class Game {
             //// Must move out of check if in check
             if (Status.isCheck()) {
                 //if (Status.defeatCheck(player, piece, endX, endY)) {
+                Board.squares[x][y].setPiece(null);
                 if (Status.allChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
-                    //System.out.println("Invalid move. You must move out of check!");
+                    Board.squares[x][y].setPiece(piece);
+                    System.out.println(piece.getType() + " is back at " + x + y);
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
+            } else if (Status.movedIntoCheck(player, piece, pieceSelection, action)){
+                throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
+
             Type type = piece.getType();
             Move move = new Move(player, piece, x, y, endX, endY);
             ///checks if Pawn Promotion is applicable
@@ -149,14 +148,11 @@ public class Game {
             //updates King's location if King moved
             if (piece.getType().equals(Type.KING)) {
                 //System.out.println("King moving to " + endX + endY);
-                King theKing = (King) piece;
+                //King theKing = (King) piece;
                 King king = player.getKing();
                 king.setXY(endX, endY);
-//                System.out.println();
 //                System.out.println(Integer.toHexString(System.identityHashCode(piece)));
 //                System.out.println(Integer.toHexString(System.identityHashCode(king)));
-//                System.out.println(Integer.toHexString(System.identityHashCode(theKing)));
-//                System.out.println();
                 //debugs(player);
                 System.out.println("Game.java King moved to " + king.getX() + king.getY());
             }
@@ -166,7 +162,6 @@ public class Game {
                 move.addCheck();
                 Status.setCheck(true);
                 System.out.println("Game.java Check: " + Status.isCheck());
-
                 if (Status.didCheckMate(otherPlayer)) {
                     move.addCheckmate();
                     Status.setCheckMate(true);
@@ -174,44 +169,19 @@ public class Game {
                 }
             }
             System.out.println(move.getMessage());
-//            King king = player.getKing();
-//            System.out.println("King moved to " + king.getX() + king.getY());
             return;
         } else {
             throw new InvalidMoveException("That is not a legal move for a " + piece.getType());
         }
     }
 
-    public static void debugs(Player player){
-        System.out.println();
-        int count = 0;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (Board.squares[i][j].hasPiece()) {
-                    Piece newPiece = Board.squares[i][j].getPiece();
-                    System.out.println(count + " " + Integer.toHexString(System.identityHashCode(newPiece)));
-                    count++;
-                }
-            }
-        }
-        count = 0;
-        List<Piece> myTeam = player.getTeam();
-        for (Piece i : myTeam){
-            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
-        }
-        Player otherPlayer = getOtherTeam(player);
-        List<Piece> yourTeam = otherPlayer.getTeam();
-        for (Piece i : yourTeam){
-            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
-        }
-        System.out.println();
-    }
     public static StatusResponse run(BoardRequest boardRequest){
+        System.out.println("");
+        System.out.println("");
         Player player = players[1];
         if (boardRequest.isWhite()){
             player = players[0];
         }
-        //System.out.println("hi" + player.getName());
         //System.out.println(player.getName() + " Game.java");
         if (Status.isActive()){
             //Game.selectPiece(player, boardRequest.getStart());
@@ -272,3 +242,28 @@ public class Game {
 
     }
 */
+
+//    public static void debugs(Player player){
+//        System.out.println();
+//        int count = 0;
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                if (Board.squares[i][j].hasPiece()) {
+//                    Piece newPiece = Board.squares[i][j].getPiece();
+//                    System.out.println(count + " " + Integer.toHexString(System.identityHashCode(newPiece)));
+//                    count++;
+//                }
+//            }
+//        }
+//        count = 0;
+//        List<Piece> myTeam = player.getTeam();
+//        for (Piece i : myTeam){
+//            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
+//        }
+//        Player otherPlayer = getOtherTeam(player);
+//        List<Piece> yourTeam = otherPlayer.getTeam();
+//        for (Piece i : yourTeam){
+//            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
+//        }
+//        System.out.println();
+//    }

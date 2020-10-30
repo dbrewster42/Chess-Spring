@@ -121,6 +121,7 @@ public class King extends Piece {
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
         if (Math.abs(endX - x) < 2 && Math.abs(endY - y) < 2) {
+            //set King's location?
             return true;
         }
         return false;
