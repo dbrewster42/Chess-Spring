@@ -3,26 +3,113 @@ package com.chess.gameflow;// import java.util.Arrays;
 
 import com.chess.pieces.*;
 import com.chess.board.*;
-import com.chess.gameflow.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Status {
-    private static boolean active = true;
-    private static boolean check = false;
-    private static boolean checkMate = false;
-    public static boolean draw = false;
-    public static boolean forfeit = false;
-    public static boolean Stalemate = false;
+    private static boolean active;
+    private static boolean check;
+    private static boolean checkMate;
+//    public static boolean draw = false;
+//    public static boolean forfeit = false;
+//    public static boolean Stalemate = false;
     static Attacker[] attackers = new Attacker[2];
 
-    // public static boolean getCheckMate(){
+    public static void setStatus(){
+        active = true;
+        check = false;
+        checkMate = false;
+    }
+    public static boolean movedIntoCheck(Player player, Piece piece, int start, int end){
+        System.out.println("Status.java movedIntoCheck()");
+        int endX = end / 10;
+        int endY = end % 10;
+        // if King moved, check all opposing pieces to see if they can check
+        if (piece.getType() == Type.KING) {
+            List<Attacker> allEnemies = allEnemies(piece);
+            for (Attacker each : allEnemies){
+                //System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
+                if (each.piece.isValidMove(each.x, each.y, endX, endY)){
+                    return true;
+                }
+            }
+            return false;
+        // if other piece, check to see if piece is in position to block attack on King, if so, did it leave that position? and if it did-
+            // check the opened positions. Should be more efficient than looping through board on every move
+        }else {
+            King king = player.getKing();
+            int kingX = king.getX();
+            int kingY = king.getY();
+            int x = start / 10;
+            int y = start % 10;
+            int betweenX;
+            int betweenY;
+            if (kingX - x == 0 ){
+                if (x - endX == 0){
+                    return false;
+                } else {
+                    betweenY = -1;
+                    if (y > kingY){
+                        betweenY = 1;
+                    }
+                    int checkY = y + betweenY;
+                    while (checkY < 8 && checkY > -1){
+                        System.out.println("Status.moveIntoCheck " + x + checkY);
+                        if (Board.squares[x][checkY].hasPiece()){
+                            Piece checkPiece = Board.squares[x][checkY].getPiece();
+                            if (checkPiece.getColor().equals(piece.getColor())){
+                                return false;
+                            } else {
+                                if (checkPiece.getType().equals(Type.QUEEN) || checkPiece.getType().equals(Type.ROOK)){
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
+                        checkY += betweenY;
+                    }
+                }
+            } else if ( kingY - y == 0){
+                if (y - endY == 0){
+                    return false;
+                } else {
+                    betweenX = -1;
+                    if (x > kingX) {
+                        betweenX = 1;
+                    }
+                    int checkX = x + betweenX;
+                    while (checkX < 8 && checkX > -1) {
+                        System.out.println("Status.moveIntoCheck " + checkX + y);
+                        if (Board.squares[checkX][y].hasPiece()) {
+                            Piece checkPiece = Board.squares[checkX][y].getPiece();
+                            if (checkPiece.getColor().equals(piece.getColor())) {
+                                return false;
+                            } else {
+                                if (checkPiece.getType().equals(Type.QUEEN) || checkPiece.getType().equals(Type.ROOK)) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
+                        checkX += betweenX;
+                    }
+                }
+            } else if (kingX - x == kingY - y){
 
-    // }
+            } else {
+                return false;
+            }
+        }
+
+
+        return false;
+    }
 
     /*
-    ************** Checks for Check! After every move it scans the pieces to see if it is a check ****************
+    ************** Checks for Check! After every move it scans the pieces to see if it has put the other team in check ****************
     */
     public static boolean didCheck(Player player, Piece piece, int x, int y) {
         if (piece.getType() == Type.KING) {
@@ -63,8 +150,18 @@ public class Status {
     }
     //false means did not beat check
     public static boolean allChecks(Player player, Piece piece, int endX, int endY){
+        System.out.println("Status.java allChecks()");
         Attacker original = attackers[0];
+        ///
+        Piece oldPiece = null;
+        if (Board.squares[endX][endY].hasPiece()) {
+            oldPiece = Board.squares[endX][endY].getPiece();
+        }
+        /// makes attempted move and validates if out of check
+        Board.squares[endX][endY].setPiece(piece);
+        ///
         if (!defeatCheck(player, piece, endX, endY, original)){
+            Board.squares[endX][endY].setPiece(oldPiece);
             return false;
         }
         List<Attacker> allEnemies = allEnemies(piece);
@@ -73,9 +170,12 @@ public class Status {
             if (defeatCheck(player, piece, endX, endY, each)){
                 continue;
             } else {
+                System.out.println("Status.172 " + endX + endY);
+                Board.squares[endX][endY].setPiece(oldPiece);
                 return false;
             }
         }
+        Board.squares[endX][endY].setPiece(oldPiece);
         return true;
         //true means not checkmate
     }
@@ -85,6 +185,7 @@ public class Status {
         if (endX == attacker.x && endY == attacker.y) {
 //            Board.squares[endX][endY].setPiece(piece);
             return true;
+            //unless taken by King!!!!!!!!!!!!!!!!!
         }
         //if knight then it can only be blocked by moving or capturing
         else if (attacker == attackers[0]){
@@ -106,17 +207,12 @@ public class Status {
         King king = player.getKing();
         int kingX = king.getX();
         int kingY = king.getY();
-        Piece oldPiece = null;
-        if (Board.squares[endX][endY].hasPiece()) {
-            oldPiece = Board.squares[endX][endY].getPiece();
-        }
-        /// makes attempted move and validates if out of check
-        Board.squares[endX][endY].setPiece(piece);
+
         if (attacker.piece.isValidMove(attacker.x, attacker.y, kingX, kingY)) {
-            Board.squares[endX][endY].setPiece(oldPiece);
+
             return false;
         } else {
-            Board.squares[endX][endY].setPiece(oldPiece);
+            //Board.squares[endX][endY].setPiece(oldPiece);
             return true;
         }
     }
@@ -177,6 +273,7 @@ public class Status {
     }
 
     public static boolean didCheckMate(Player player) {
+        System.out.println("Status.java didCheckMate()");
         String color = "black";
         if (player.isWhite()) {
             color = "white";
@@ -225,7 +322,7 @@ public class Status {
             for (int j = 0; j < 8; j++) {
                 if (Board.squares[i][j].hasPiece()) {
                     Piece piece = Board.squares[i][j].getPiece();
-                    System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
+                    //System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
                     if (piece.getColor().equals(color)) {
                         if (piece.getType().equals(Type.KING)) {
                             continue;

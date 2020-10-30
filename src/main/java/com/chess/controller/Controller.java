@@ -1,7 +1,6 @@
 package com.chess.controller;
 
 import com.chess.board.*;
-import com.chess.exceptions.InvalidMoveException;
 import com.chess.gameflow.Game;
 import com.chess.gameflow.Move;
 import com.chess.gameflow.Player;
@@ -31,6 +30,7 @@ public class Controller {
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
+        Status.setStatus();
         board.generateBoard();
         game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
@@ -40,15 +40,24 @@ public class Controller {
         return returnValue;
     }
 
-//    @GetMapping("/players")
-//    public Response getPlayers(){
-//        PlayersResponse returnValue = new PlayersResponse(Game.player1.getName(), Game.player2.getName());
-//        return returnValue;
-//    }
+    @PostMapping("/restart")
+    public List<Response> restart(){
+        Status.setStatus();
+        board.generateBoard();
+        String name1 = Game.players[0].getName();
+        String name2 = Game.players[1].getName();
+        game = new Game(name1, name2);
+        Move.moves = new ArrayList<>();
+        List<Response> returnValue = board.returnBoard();
+        Player player1= Game.players[0];
+        StatusResponse status = new StatusResponse(true, false, player1);
+        returnValue.add(status);
+        return returnValue;
+    }
 
     @PostMapping
     public List<Response> makeMove(@RequestBody BoardRequest boardRequest) {
-        //System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR OR IS IT THEIR WHO KNOWS " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
+        //System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
         StatusResponse status = Game.run(boardRequest);
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
@@ -64,24 +73,6 @@ public class Controller {
         }
         StatusResponse statusResponse = new StatusResponse("We have a draw! Good Game!");
         return statusResponse;
-    }
-
-    @PostMapping("/restart")
-    public List<Response> restart(){
-        Status.setCheckMate(false);
-        Status.setCheck(false);
-        Status.setActive(true);
-        Move.moves = new ArrayList<>();
-        String name1 = Game.players[0].getName();
-        String name2 = Game.players[1].getName();
-        game = new Game(name1, name2);
-        board.generateBoard();
-        Move.moves = new ArrayList<>();
-        List<Response> returnValue = board.returnBoard();
-        Player player1= Game.players[0];
-        StatusResponse status = new StatusResponse(true, false, player1);
-        returnValue.add(status);
-        return returnValue;
     }
 
     @GetMapping("/moves")
