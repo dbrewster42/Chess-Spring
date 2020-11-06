@@ -72,13 +72,13 @@ public class Queen extends Piece {
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
         // System.out.println("MY QUEEN!");
-        System.out.println("from the " + x + "" + y + " to the " + endX + "" + endY);
+        //System.out.println("from the " + x + "" + y + " to the " + endX + "" + endY);
         int condition1 = Math.abs(endX - x);
         int condition2 = Math.abs(endY - y);
         int checkX, checkY, betweenX, betweenY;
         if (condition1 == 0) {
             int count = endY - y;
-            System.out.println("Travelling horizontally + count" + count);
+            //System.out.println("Travelling horizontally + count" + count);
             if (count > 0) {
                 checkY = 1;
             } else {
@@ -87,7 +87,7 @@ public class Queen extends Piece {
             betweenY = y;
             while (count != 1 && count != -1) {
                 betweenY = betweenY + checkY;
-                System.out.println("Checking Square " + x + betweenY + ". Count- " + count);
+                //System.out.println("Checking Square " + x + betweenY + ". Count- " + count);
                 if (Board.squares[x][betweenY].hasPiece()) {
                     return false;
                 }
@@ -105,7 +105,7 @@ public class Queen extends Piece {
             betweenX = x;
             while (count > 1) {
                 betweenX = betweenX + checkX;
-                System.out.println("Checking Square " + betweenX + y + ". Count- " + count);
+                //System.out.println("Checking Square " + betweenX + y + ". Count- " + count);
                 if (Board.squares[betweenX][y].hasPiece()) {
                     return false;
                 }
@@ -131,9 +131,9 @@ public class Queen extends Piece {
             while (count > 1) {
                 betweenX = betweenX - checkX;
                 betweenY = betweenY - checkY;
-                System.out.println("Checking Square " + betweenX + betweenY + " . Count- " + count);
+                //System.out.println("Checking Square " + betweenX + betweenY + " . Count- " + count);
                 if (Board.squares[betweenX][betweenY].hasPiece()) {
-                    System.out.println("Blocked");
+                    //System.out.println("Blocked");
                     return false;
                 }
                 count--;

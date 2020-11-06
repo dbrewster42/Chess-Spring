@@ -75,7 +75,7 @@ public class Rook extends Piece {
                 System.out.println(count);
                 while (count != 1 && count != -1) {
                     between = between + check;
-                    System.out.println("Checking Square " + x + between + ". Count- " + count);
+                    //System.out.println("Checking Square " + x + between + ". Count- " + count);
                     if (Board.squares[x][between].hasPiece()) {
                         return false;
                     }
@@ -93,7 +93,7 @@ public class Rook extends Piece {
                 between = x;
                 while (count != 1 && count != -1) {
                     between = between + check;
-                    System.out.println("Checking Square " + between + y + ". Count- " + count);
+                    //System.out.println("Checking Square " + between + y + ". Count- " + count);
                     if (Board.squares[between][y].hasPiece()) {
                         return false;
                     }

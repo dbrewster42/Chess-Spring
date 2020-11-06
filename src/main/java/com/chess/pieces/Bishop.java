@@ -77,7 +77,7 @@ public class Bishop extends Piece {
         while (count > 1) {
             betweenX = betweenX - checkX;
             betweenY = betweenY - checkY;
-            System.out.println("Checking Square " + betweenX + betweenY + " . Count- " + count);
+            //System.out.println("Checking Square " + betweenX + betweenY + " . Count- " + count);
             if (Board.squares[betweenX][betweenY].hasPiece()) {
                 return false;
             }
