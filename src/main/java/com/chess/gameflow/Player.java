@@ -15,9 +15,9 @@ public class Player {
         this.name = name;
         this.isWhite = isWhite;
         if (isWhite) {
-            team = createPieces(6);
+            team = takePieces(6);
         } else {
-            team = createPieces(0);
+            team = takePieces(0);
         }
     }
 
@@ -38,7 +38,7 @@ public class Player {
     /*
      ************** Initialization of All Pieces ****************
      */
-    public static List<Piece> createPieces(int start) {
+    public static List<Piece> takePieces(int start) {
         List<Piece> team = new ArrayList<Piece>(16);
         //int end = start + 2;
         for (int i = start; i < start + 2; i++) {

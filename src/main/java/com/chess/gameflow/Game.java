@@ -12,23 +12,16 @@ public class Game {
     public static Player player1;
     public static Player player2;
     public static Player[] players = new Player[2];
+    private static boolean promotion = false;
 
     public Game(String name, String name2){
         //Board board = Board.boardConstructor();
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
-        System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
+        //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
         players[0] = player1;
         players[1] = player2;
     }
-
-//    public static Player getCurrentTeam(boolean isWhite){
-//        if (isWhite){
-//            return players[0];
-//        } else {
-//            return players[1];
-//        }
-//    }
 
     /*
      ************** Get other Team ****************
@@ -64,27 +57,9 @@ public class Game {
         }
     }
 
-//    /*
-//     ************** Select a Piece ****************
-//     */
-//    public static void selectPiece(Player player, int pieceSelection) {
-//        int x = pieceSelection / 10;
-//        int y = pieceSelection % 10;
-//        //System.out.println("X: " + x + " , Y: " + y);
-//        Square chosen = Board.squares[x][y];
-//        if (chosen.hasPiece()) {
-//            Piece piece = chosen.getPiece();
-//            if (player.hasPiece(piece)) {
-//                System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
-//                return;
-//            } else {
-//                System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
-//            }
-//
-//        } else {
-//            System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
-//        }
-//    }
+    public static void setPromotion(boolean promotion) {
+        Game.promotion = promotion;
+    }
 
     /*
      ************** Move Your Piece ****************
@@ -95,8 +70,7 @@ public class Game {
         Board board = Board.boardConstructor();
         Square initial = Board.squares[x][y];
         Piece piece = initial.getPiece();
-        System.out.println("Moving the piece from " + pieceSelection + " " + piece.getName() + " to " + action);
-        //System.out.println("The King is at " + king.getX() + king.getY());
+        System.out.println(player.getName() +  " moves the " + piece.getType() + " from " + pieceSelection + " to " + action);
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
@@ -111,7 +85,7 @@ public class Game {
             if (Status.isCheck()) {
                 //if (Status.defeatCheck(player, piece, endX, endY)) {
                 Board.squares[x][y].setPiece(null);
-                if (Status.allChecks(player, piece, endX, endY)){
+                if (Status.defeatAllChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
@@ -122,16 +96,21 @@ public class Game {
             } else if (Status.movedIntoCheck(player, piece, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
-
-            Type type = piece.getType();
             Move move = new Move(player, piece, x, y, endX, endY);
-            ///checks if Pawn Promotion is applicable
-            if (type.equals(Type.PAWN)) {
-                if (endX == 0 || endX == 7) {
-                    piece = player.pawnPromotion(piece);
-                    move.addPromoted();
-                }
+
+            if (promotion){
+                piece = player.pawnPromotion(piece);
+                move.addPromoted();
+                promotion = false;
             }
+//            Type type = piece.getType();
+//            ///checks if Pawn Promotion is applicable
+//            if (type.equals(Type.PAWN)) {
+//                if (endX == 0 || endX == 7) {
+//                    piece = player.pawnPromotion(piece);
+//                    move.addPromoted();
+//                }
+//            }
             /*
              ****** checks if a capture took place and if so, sets enemy piece to null ******
              */
@@ -141,21 +120,17 @@ public class Game {
                 move.addCapture(capturedPiece);
                 otherPlayer.killPiece(capturedPiece);
             }
-            //moves from old spot ///moves to new spot
+            //moves from old spot to new position
             Board.squares[x][y].setPiece(null);
             board.getSquare(endX, endY).setPiece(piece);
 
             //updates King's location if King moved
-            if (piece.getType().equals(Type.KING)) {
-                //System.out.println("King moving to " + endX + endY);
-                //King theKing = (King) piece;
-                King king = player.getKing();
-                king.setXY(endX, endY);
-//                System.out.println(Integer.toHexString(System.identityHashCode(piece)));
-//                System.out.println(Integer.toHexString(System.identityHashCode(king)));
-                //debugs(player);
-                System.out.println("Game.java King moved to " + king.getX() + king.getY());
-            }
+//            if (piece.getType().equals(Type.KING)) {
+//                King king = player.getKing();
+//                king.setXY(endX, endY);
+////                System.out.println(Integer.toHexString(System.identityHashCode(piece)));
+//                System.out.println("Game.java King moved to " + king.getX() + king.getY());
+//            }
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
             if (Status.didCheck(player, piece, endX, endY)) {
@@ -187,14 +162,14 @@ public class Game {
             //Game.selectPiece(player, boardRequest.getStart());
             if (boardRequest.getEnd() == 999) {
                 SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
-            }else {
+            } else {
                 Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
             System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
             return returnValue;
-        }else {
+        } else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
             returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
 
@@ -202,7 +177,27 @@ public class Game {
         }
     }
 }
-
+//    /*
+//     ************** Select a Piece ****************
+//     */
+//    public static void selectPiece(Player player, int pieceSelection) {
+//        int x = pieceSelection / 10;
+//        int y = pieceSelection % 10;
+//        //System.out.println("X: " + x + " , Y: " + y);
+//        Square chosen = Board.squares[x][y];
+//        if (chosen.hasPiece()) {
+//            Piece piece = chosen.getPiece();
+//            if (player.hasPiece(piece)) {
+//                System.out.println("You have selected a " + piece.getType() + " at " + x + ", " + y);
+//                return;
+//            } else {
+//                System.out.println("Invalid choice. That is not your piece at " + x + ", " + y);
+//            }
+//
+//        } else {
+//            System.out.println("There is no piece at " + x + ", " + y + ". Please try again");
+//        }
+//    }
 
 
 /*
@@ -266,4 +261,12 @@ public class Game {
 //            System.out.println(count + " " + Integer.toHexString(System.identityHashCode(i)));
 //        }
 //        System.out.println();
+//    }
+
+//    public static Player getCurrentTeam(boolean isWhite){
+//        if (isWhite){
+//            return players[0];
+//        } else {
+//            return players[1];
+//        }
 //    }

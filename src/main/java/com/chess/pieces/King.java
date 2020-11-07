@@ -42,7 +42,7 @@ public class King extends Piece {
     */
     // @Override
     public void setXY(int x, int y) {
-        System.out.println("King changing location to " + x + y);
+        //System.out.println("King changing location to " + x + y);
         this.x = x;
         this.y = y;
         System.out.println("The King's location is now " + this.x + this.y);
@@ -89,7 +89,7 @@ public class King extends Piece {
                 if (j < 0 || j > 7) {
                     continue;
                 }
-                System.out.println("i " + i + " j " + j);
+                //System.out.println("i " + i + " j " + j);
                 if (Board.squares[i][j].hasPiece()) {
                     if (Board.squares[i][j].getPiece().getColor().equals(this.color)) {
                         continue;
@@ -121,7 +121,8 @@ public class King extends Piece {
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
         if (Math.abs(endX - x) < 2 && Math.abs(endY - y) < 2) {
-            //set King's location?
+            setXY(endX, endY);
+            //System.out.println("King moved to " + this.x + this.y);
             return true;
         }
         return false;

@@ -1,6 +1,7 @@
 package com.chess.pieces;
 
 import com.chess.board.*;
+import com.chess.gameflow.Game;
 
 public class Pawn extends Piece {
     // final public static Piece B_Pawn = new Pawn("Pawn", "black");
@@ -61,17 +62,16 @@ public class Pawn extends Piece {
         int direction = endX - x;
         // System.out.println(this.color + this.type + this.name);
         if (this.name.equals("wpawn.png")) {
-            // System.out.println("WHITIES");
             direction = x - endX;
         }
-        // System.out.println(direction);
-
         if (y - endY != 0) {
-            //System.out.println("Pawn.java: y has changed");
             if (Math.abs(y - endY) == 1) {
                 if (direction == 1){
                     ///capture move
                     if (Board.squares[endX][endY].hasPiece()) {
+                        if (endX == 0 || endX == 7) {
+                            Game.setPromotion(true);
+                        }
                         return true;
                     }
                 }
@@ -82,20 +82,27 @@ public class Pawn extends Piece {
             if (Board.squares[endX][endY].hasPiece()) {
                 return false;
             }
+            if (endX == 0 || endX == 7) {
+                Game.setPromotion(true);
+            }
             return true;
         }
         if (direction != 1) {
             if (x == 1 && endX == 3 || x == 6 && endX == 4) {
-                if (Board.squares[endX][endY].hasPiece()) {
+                int checkX = 2;
+                if (endX == 4){
+                    checkX = 5;
+                }
+                if (Board.squares[endX][endY].hasPiece() || Board.squares[checkX][endY].hasPiece()) {
                     return false;
                 }
                 return true;
             }
-
             return false;
         }
-        return true;
+        return false;
     }
+
 
     // public void select() {
     // }
