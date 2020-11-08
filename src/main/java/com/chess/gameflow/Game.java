@@ -13,9 +13,11 @@ public class Game {
     public static Player player2;
     public static Player[] players = new Player[2];
     private static boolean promotion = false;
+    Board board;
 
     public Game(String name, String name2){
-        //Board board = Board.boardConstructor();
+        Status.setStatus();
+        board = new Board();
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
         //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
@@ -94,6 +96,9 @@ public class Game {
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
             } else if (Status.movedIntoCheck(player, piece, pieceSelection, action)){
+                if (piece.getType().equals(Type.KING)){
+                    piece.isValidMove(x, y, x, y);
+                }
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             Move move = new Move(player, piece, x, y, endX, endY);
@@ -166,12 +171,16 @@ public class Game {
                 Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
-            System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
+            //System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
             return returnValue;
         } else {
             StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
-            returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
+            if (Status.isCheckMate()){
+                returnValue.setMessage("CHECKMATE!!!! " + player.getName() + " wins!!!!!");
+            } else {
+                returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
+            }
 
             return returnValue;
         }

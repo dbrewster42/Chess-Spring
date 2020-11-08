@@ -13,7 +13,7 @@ public class Board {
     final public static Square[][] squares = new Square[8][8];
     private static Board uni;
 
-    private Board() {
+    public Board() {
         //dynamically creates board composed of 64 squares
         generateBoard();
         //prints board pieces or null in a 8x8 square
