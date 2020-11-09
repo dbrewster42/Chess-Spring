@@ -7,8 +7,6 @@ import com.chess.pieces.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Integer.parseInt;
-
 public class Board {
     final public static Square[][] squares = new Square[8][8];
     private static Board uni;
@@ -16,8 +14,6 @@ public class Board {
     public Board() {
         //dynamically creates board composed of 64 squares
         generateBoard();
-        //prints board pieces or null in a 8x8 square
-//        showBoard();
     }
 
     /*
@@ -30,7 +26,7 @@ public class Board {
         return uni;
     }
 
-
+    //creates board
     public Square[][] generateBoard() {
         ///add first and last row manually
         squares[0][0] = new Square(0, 0, new Rook("black"));
@@ -80,31 +76,7 @@ public class Board {
         return squares[x][y];
     }
 
-    /*
-     **********Prints Board to console With Each Square Labeled************
-     */
-    public void showDetailedBoard() {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (j == 7){
-                    if (squares[i][j].hasPiece()){
-                        System.out.println(i + "" + j + ":" + squares[i][j].printPiece());
-                    }
-                    else{
-                        System.out.println(i + "" + j + ":    ");
-                    }
-                }
-                else {
-                    if (squares[i][j].hasPiece()) {
-                        System.out.print(i + "" + j + ": " + squares[i][j].printPiece() + ", ");
-                    } else {
-                        System.out.print(i + "" + j + ":       ");
-                    }
-                }
-            }
-        }
-    }
-
+    // Returns Board for API Call
     public List<Response> returnBoard(){
         //showDetailedBoard();
         List<Response> returnValue = new ArrayList<Response>(64);
@@ -121,3 +93,28 @@ public class Board {
         return returnValue;
     }
 }
+
+//    /*
+//     **********Prints Board to console With Each Square Labeled************
+//     */
+//    public void showDetailedBoard() {
+//        for (int i = 0; i < 8; i++) {
+//            for (int j = 0; j < 8; j++) {
+//                if (j == 7){
+//                    if (squares[i][j].hasPiece()){
+//                        System.out.println(i + "" + j + ":" + squares[i][j].printPiece());
+//                    }
+//                    else{
+//                        System.out.println(i + "" + j + ":    ");
+//                    }
+//                }
+//                else {
+//                    if (squares[i][j].hasPiece()) {
+//                        System.out.print(i + "" + j + ": " + squares[i][j].printPiece() + ", ");
+//                    } else {
+//                        System.out.print(i + "" + j + ":       ");
+//                    }
+//                }
+//            }
+//        }
+//    }

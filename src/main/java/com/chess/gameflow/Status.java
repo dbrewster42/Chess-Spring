@@ -5,15 +5,13 @@ import com.chess.pieces.*;
 import com.chess.board.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Status {
     private static boolean active;
     private static boolean check;
     private static boolean checkMate;
-//    public static boolean draw = false;
-//    public static boolean forfeit = false;
-//    public static boolean Stalemate = false;
     static Attacker[] attackers = new Attacker[2];
 
     public static void setStatus(){
@@ -283,11 +281,11 @@ public class Status {
         /////////NEED TO SET KING TO NULL SO HE DOESN"T BLOCK VALID MOVE THAT IS STILL IN CHECK
         for (int a = 0; a < 10; a = a + 2) {
             if (possibleMoves[a] == 8) {
-                System.out.println("Status.java 295: " + a + " not here");
+                //System.out.println("Status.java 295: " + a + " not here");
                 break;
            //} else if (kingX - possibleMoves[a] == xDirection && kingY - possibleMoves[a + 1] == yDirection) {
             } else if (attacker.piece.isValidMove(attacker.x, attacker.y, possibleMoves[a], possibleMoves[a+1])) {
-                System.out.println("Status.java 300: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
+                //System.out.println("Status.java 300: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
                 continue;
 
             } else {
@@ -309,32 +307,27 @@ public class Status {
                         }
                         int blockX = attacker.x;
                         int blockY = attacker.y;
-//                        while (blockX != i && blockY != j) {
                         while (true) {
                             if (blockX > 7 || blockX < 0 || blockY > 7 || blockY < 0) {
-                                System.out.println("Out of bounds");
+                                //System.out.println("Out of bounds");
                                 break;
                             }
                             if (blockX == kingX && blockY == kingY){
-                                System.out.println("End of the line");
+                                //System.out.println("End of the line");
                                 break;
                             }
-                            System.out.println(
-                                    "Status.java 333: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
+                            //System.out.println("Status.java 333: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
                             if (piece.isValidMove(i, j, blockX, blockY)) {
-                                System.out.println("Can be blocked by " + piece.getType() + " at " + i + "" + j
+                                System.out.println("Status.java 337: Not checkmate- Can be blocked by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
-                                System.out.println("Status.java 337: Not checkmate");
                                 return false; //is not checkmate
                             }
                             blockX += xDirection;
                             blockY += yDirection;
                         }
-
                     } else {
-                        System.out.println("Status.java 345: Not Enemy piece is at " + i + j + " can " + piece.getType() + " reach any of the " + narrowedMoves.size() / 2);
+                        //System.out.println("Status.java 345: Enemy piece is at " + i + j + ". Can " + piece.getType() + " reach any of the " + narrowedMoves.size() / 2);
                         for (int n =0; n< narrowedMoves.size(); n+=2){
-                            System.out.println(narrowedMoves.get(n) + narrowedMoves.get(n+1));
                             if (piece.isValidMove(i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
                                 narrowedMoves.remove(n +1);
                                 narrowedMoves.remove(n);
@@ -396,10 +389,17 @@ public class Status {
 
     // public static void storeAttacker(Player player, Piece piece, int x, int y) {}
     public static boolean didStalemate(Player player) {
+        if (Status.isCheck()){
+            return false;
+        }
         String color = "black";
         if (player.isWhite()) {
             color = "white";
         }
+//        boolean mate = Arrays.stream(Board.squares).flatMap(b -> b.getSquare().stream()).filter(s -> s.hasPiece())
+//                 .filter(s -> s.getPiece().getColor() == color)
+//        //boolean staleMate = board.stream().flatMap()
+//        Arrays.stream(Board.squares).flatMap(arr -> Arrays.stream(arr).flatMap(s -> s.hasPiece() && s.getPiece())
         King king = player.getKing();
         // int kingX = king.getX();
         // int kingY = king.getY();
@@ -425,7 +425,7 @@ public class Status {
                                 System.out.println("Can be reached by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
                                 System.out.println("Not checkmate");
-                                return false; //is not checkmate
+                                return false; //is not stalemate
                             }
                             a = a + 2;
                         }

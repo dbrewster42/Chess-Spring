@@ -79,7 +79,6 @@ public class Game {
         if (piece.isValidMove(x, y, endX, endY)) {
             if (Board.squares[endX][endY].hasPiece()) {
                 if (player.hasPiece(Board.squares[endX][endY].getPiece())) {
-                    System.out.println("");
                     throw new InvalidMoveException("Invalid choice. You already have a piece there!");
                 }
             }
@@ -108,14 +107,7 @@ public class Game {
                 move.addPromoted();
                 promotion = false;
             }
-//            Type type = piece.getType();
-//            ///checks if Pawn Promotion is applicable
-//            if (type.equals(Type.PAWN)) {
-//                if (endX == 0 || endX == 7) {
-//                    piece = player.pawnPromotion(piece);
-//                    move.addPromoted();
-//                }
-//            }
+
             /*
              ****** checks if a capture took place and if so, sets enemy piece to null ******
              */
@@ -129,13 +121,6 @@ public class Game {
             Board.squares[x][y].setPiece(null);
             board.getSquare(endX, endY).setPiece(piece);
 
-            //updates King's location if King moved
-//            if (piece.getType().equals(Type.KING)) {
-//                King king = player.getKing();
-//                king.setXY(endX, endY);
-////                System.out.println(Integer.toHexString(System.identityHashCode(piece)));
-//                System.out.println("Game.java King moved to " + king.getX() + king.getY());
-//            }
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
             if (Status.didCheck(player, piece, endX, endY)) {
@@ -158,34 +143,40 @@ public class Game {
     public static StatusResponse run(BoardRequest boardRequest){
         System.out.println("");
         System.out.println("");
-        Player player = players[1];
-        if (boardRequest.isWhite()){
-            player = players[0];
-        }
-        //System.out.println(player.getName() + " Game.java");
-        if (Status.isActive()){
-            //Game.selectPiece(player, boardRequest.getStart());
+        if (Status.isActive()) {
+            Player player = players[1];
+            if (boardRequest.isWhite()) {
+                player = players[0];
+            }
             if (boardRequest.getEnd() == 999) {
                 SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
             } else {
                 Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
-            //System.out.println("returning " +  Status.isCheck() + " " + otherPlayer.getName());
             StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
+            if (Status.isCheckMate()) {
+                returnValue.setMessage("CHECKMATE!!!! " + player.getName() + " wins!!!!!");
+            }
             return returnValue;
         } else {
-            StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
-            if (Status.isCheckMate()){
-                returnValue.setMessage("CHECKMATE!!!! " + player.getName() + " wins!!!!!");
-            } else {
-                returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
-            }
-
-            return returnValue;
+            StatusResponse gameOver = new StatusResponse("The game is over dummy! You need to start a new game");
+            return gameOver;
         }
     }
 }
+//        } else {
+//            StatusResponse returnValue = new StatusResponse(false, Status.isCheck(), player);
+//            if (Status.isCheckMate()){
+//                System.out.println("Adding message for front end");
+//                returnValue.setMessage("CHECKMATE!!!! " + player.getName() + " wins!!!!!");
+//            } else {
+//                returnValue.setMessage("Game over! " + player.getName() + " wins!!!!!");
+//            }
+//
+//            return returnValue;
+//        }
+
 //    /*
 //     ************** Select a Piece ****************
 //     */
