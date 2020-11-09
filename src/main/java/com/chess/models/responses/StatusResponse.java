@@ -6,7 +6,7 @@ public class StatusResponse extends Response {
     private boolean active = true;
     private boolean check = false;
     private String message;
-    private Player player;
+    //private Player player;
     private String playerName;
     //private Piece[] team;
     private boolean isWhite;
@@ -17,13 +17,12 @@ public class StatusResponse extends Response {
     }
 
     public StatusResponse(boolean active, boolean check, Player player) {
-        System.out.println(check + " 12345678 " + player.getName());
         this.active = active;
         this.check = check;
         this.playerName = player.getName();
         this.isWhite = player.isWhite();
         //this.team = player.getTeam();
-        System.out.println(this.check + " 1234567890 " + playerName);
+        //System.out.println(this.check + " 1234567890 " + playerName);
     }
 
     public boolean isActive() {

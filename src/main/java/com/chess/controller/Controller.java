@@ -10,6 +10,7 @@ import com.chess.models.requests.PlayerRequest;
 import com.chess.models.requests.StatusRequest;
 import com.chess.models.responses.MovesResponse;
 
+import com.chess.models.responses.PieceResponse;
 import com.chess.models.responses.Response;
 import com.chess.models.responses.StatusResponse;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,8 @@ public class Controller {
 
     @PostMapping("/players")
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
-        Status.setStatus();
-        board.generateBoard();
+//        Status.setStatus();
+//        board.generateBoard();
         game = new Game(request.getName1(), request.getName2());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
@@ -42,8 +43,8 @@ public class Controller {
 
     @PostMapping("/restart")
     public List<Response> restart(){
-        Status.setStatus();
-        board.generateBoard();
+//        Status.setStatus();
+//        board.generateBoard();
         String name1 = Game.players[0].getName();
         String name2 = Game.players[1].getName();
         game = new Game(name1, name2);
@@ -63,6 +64,13 @@ public class Controller {
         returnValue.add(status);
         return returnValue;
     }
+//    @PostMapping
+//    public List<Response> undo(){
+//        Game.undo(1);
+//        List<Response> returnValue = board.returnBoard();
+//        returnValue.add(status);
+//        return returnValue;
+//    }
 
     @PostMapping("/end")
     public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
@@ -79,6 +87,13 @@ public class Controller {
     public MovesResponse displayMoves(){
         MovesResponse movesResponse = new MovesResponse(Move.returnMoveMessages());
         return movesResponse;
+    }
+
+    @GetMapping("/pieces")
+    public PieceResponse displayPieces(Player player){
+        Player otherPlayer = Game.getOtherTeam(player);
+        PieceResponse pieceResponse = new PieceResponse(player.getTeam(), otherPlayer.getTeam());
+        return pieceResponse;
     }
 }
 
