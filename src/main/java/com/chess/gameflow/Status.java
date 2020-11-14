@@ -24,7 +24,7 @@ public class Status {
         int endX = end / 10;
         int endY = end % 10;
         // if King moved, check all opposing pieces to see if they can check
-        if (piece.getType() == Type.KING) {
+        if (piece.getType().equals(Type.KING)) {
             List<Attacker> allEnemies = allEnemies(piece);
             for (Attacker each : allEnemies){
                 //System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
@@ -146,7 +146,7 @@ public class Status {
     ************** Checks for Check! After every move it scans the pieces to see if it has put the other team in check ****************
     */
     public static boolean didCheck(Player player, Piece piece, int x, int y) {
-        if (piece.getType() == Type.KING) {
+        if (piece.getType().equals(Type.KING)) {
             return false;
         }
         Player otherTeam = Game.getOtherTeam(player);
@@ -184,7 +184,7 @@ public class Status {
     }
     //false means did not beat check
     public static boolean defeatAllChecks(Player player, Piece piece, int endX, int endY){
-        System.out.println("Status.java allChecks()");
+        System.out.println("Status.java defeatAllChecks()");
         Attacker original = attackers[0];
         ///
         Piece oldPiece = null;
@@ -196,6 +196,7 @@ public class Status {
         ///
         if (!defeatCheck(player, piece, endX, endY, original)){
             Board.squares[endX][endY].setPiece(oldPiece);
+            System.out.println("Status.199 did not defeat check by the Checker, get it together!");
             return false;
         }
         List<Attacker> allEnemies = allEnemies(piece);
@@ -204,7 +205,7 @@ public class Status {
             if (defeatCheck(player, piece, endX, endY, each)){
                 continue;
             } else {
-                System.out.println("Status.197 " + endX + endY);
+                System.out.println("Status.defeatAllChecks().208 did not defeat check by " + each.getPiece().getType()  + " at " + each.getX() + each.getY() + " to " + endX + endY);
                 Board.squares[endX][endY].setPiece(oldPiece);
                 return false;
             }
@@ -215,33 +216,35 @@ public class Status {
     }
 
     public static boolean defeatCheck(Player player, Piece piece, int endX, int endY, Attacker attacker) {
-        //if attacking piece is captured, then check is defeated
+        //if attacking piece is captured, then check is defeated unless taken by King
         if (endX == attacker.x && endY == attacker.y) {
 //            Board.squares[endX][endY].setPiece(piece);
+            System.out.println("Attacking piece captured! Checking Validity");
             return true;
-            //unless taken by King!!!!!!!!!!!!!!!!!
         }
         //if knight then it can only be blocked by moving or capturing
-        else if (attacker == attackers[0]){
-            if (attacker.type == Type.KNIGHT) {
-                if (piece.getType() != Type.KING) {
-                    return false;
-                }
-            }
-        }
-        if (piece.getType() == Type.KING) {
-            if (attacker.piece.isValidMove(attacker.x, attacker.y, endX, endY)) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
+//        else if (attacker == attackers[0]){
+//            if (attacker.type == Type.KNIGHT) {
+//                System.out.println("Status.defeatCheck() - You cannot block a knight!!");
+//                if (piece.getType() != Type.KING) {
+//                    return false;
+//                }
+//            }
+//        }
+//        if (piece.getType() == Type.KING) {
+//            if (attacker.piece.isValidMove(attacker.x, attacker.y, endX, endY)) {
+//                return false;
+//            }
+//            else {
+//                return true;
+//            }
+//        }
         King king = player.getKing();
         int kingX = king.getX();
         int kingY = king.getY();
 
         if (attacker.piece.isValidMove(attacker.x, attacker.y, kingX, kingY)) {
+            System.out.println("Status.defeatCheck() - returns false by " + attacker.piece.getType() + attacker.x + attacker.y + " to the king at " + kingX + kingY);
             return false;
         } else {
             //Board.squares[endX][endY].setPiece(oldPiece);

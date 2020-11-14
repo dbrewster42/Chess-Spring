@@ -90,6 +90,9 @@ public class Game {
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
                 } else {
+                    if (piece.getType().equals(Type.KING)){
+                        piece.isValidMove(x, y, x, y);
+                    }
                     Board.squares[x][y].setPiece(piece);
                     System.out.println(piece.getType() + " is back at " + x + y);
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
