@@ -2,6 +2,7 @@ package com.chess.gameflow;
 
 import com.chess.board.*;
 import com.chess.exceptions.InvalidMoveException;
+import com.chess.exceptions.MustDefeatCheckException;
 import com.chess.pieces.*;
 
 import java.util.List;
@@ -94,16 +95,28 @@ public class SpecialMoves {
         Piece piece = Board.squares[x][y].getPiece();
         Piece theKing = Board.squares[x][4].getPiece();
         King king = player.getKing();
+//        if (Status.movedIntoCheck(player, king, pieceSelection, action)){
+////            if (piece.getType().equals(Type.KING)){
+////                piece.isValidMove(x, y, x, y);
+////            }
+//            throw new MustDefeatCheckException("Invalid move! You may not move into check!");
+//        }
         if (y == 0) {
+            int action = x * 10 + y;
+            if (Status.movedIntoCheck(player, king, pieceSelection, action)){
+                throw new MustDefeatCheckException("Invalid move! You may not move into check!");
+            }
             Board.squares[x][3].setPiece(piece);
             Board.squares[x][2].setPiece(theKing);
             king.setXY(x, 2);
             Board.squares[x][0].setPiece(null);
             Board.squares[x][4].setPiece(null);
-            // String move = player.getName() + " has performed a long side castle";
             Move move = new Move(player, piece, x, y, x, 3, true);
-            //moves.add(move);
         } else if (y == 7) {
+            int action = x * 10 + y;
+            if (Status.movedIntoCheck(player, king, pieceSelection, action)){
+                throw new MustDefeatCheckException("Invalid move! You may not move into check!");
+            }
             Board.squares[x][5].setPiece(piece);
             Board.squares[x][6].setPiece(theKing);
             king.setXY(x, 6);

@@ -4,11 +4,11 @@ import com.chess.pieces.Piece;
 import com.chess.pieces.Type;
 
 public class Attacker {
-    public boolean isWhite;
+    //public boolean isWhite;
     public Piece piece;
     public int x;
     public int y;
-    public Type type;
+    //public Type type;
 
     private Attacker(Piece piece, int x, int y) {
         this.piece = piece;
@@ -57,11 +57,11 @@ public class Attacker {
         this.y = y;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
+//    public Type getType() {
+//        return type;
+//    }
+//
+//    public void setType(Type type) {
+//        this.type = type;
+//    }
 }
