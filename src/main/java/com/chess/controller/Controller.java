@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin(origins= "http://localhost:3000", maxAge=7200)
+//@CrossOrigin(origins= "http://localhost:3000", maxAge=7200)
+@CrossOrigin(origins= "http://localhost:3000")
 @RestController
 @RequestMapping("/game")
 public class Controller {
@@ -64,13 +65,14 @@ public class Controller {
         returnValue.add(status);
         return returnValue;
     }
-//    @PostMapping
-//    public List<Response> undo(){
-//        Game.undo(1);
-//        List<Response> returnValue = board.returnBoard();
-//        returnValue.add(status);
-//        return returnValue;
-//    }
+
+    @PostMapping("/undo")
+    public List<Response> undo(){
+        StatusResponse status = Game.undo();
+        List<Response> returnValue = board.returnBoard();
+        returnValue.add(status);
+        return returnValue;
+    }
 
     @PostMapping("/end")
     public StatusResponse endGame(@RequestBody StatusRequest statusRequest){

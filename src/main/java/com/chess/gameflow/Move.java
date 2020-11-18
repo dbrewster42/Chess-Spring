@@ -12,6 +12,7 @@ public class Move {
     public boolean capture = false;
     public boolean promoted = false;
     public boolean checking = false;
+    public boolean passant = false;
     public boolean castle;
     private String message;
     private Player player;
@@ -50,7 +51,6 @@ public class Move {
     ************** Prints All Moves ****************
     */
     public static void printMoves() {
-        
         int count = 1;
         for (Move i : moves) {
             System.out.println(count + ". " + i.getMessage());
@@ -83,6 +83,7 @@ public class Move {
     }
 
     public void addPassant() {
+        passant = true;
         message += " using en passant";
     }
 
@@ -132,4 +133,7 @@ public class Move {
         return this.capturedPiece;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 }

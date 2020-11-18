@@ -36,29 +36,6 @@ public class Game {
         }
     }
 
-    /*
-     ************** Undo side effects in tandem with Memento ****************
-     */
-    public static void undo(int i) {
-        Move lastMove = Move.moves.get(Move.moves.size() - i);
-        int x = lastMove.getEndX();
-        int y = lastMove.getEndY();
-        int prevX = lastMove.getX();
-        int prevY = lastMove.getY();
-        Board.squares[prevX][prevY].setPiece(lastMove.getPiece());
-        if (lastMove.capture) {
-            Piece piece = lastMove.getCapturedPiece();
-            Board.squares[x][y].setPiece(piece);
-            if (piece.getColor().equals("white")) {
-                player1.restorePiece(piece);
-            } else {
-                player2.restorePiece(piece);
-            }
-        } else {
-            Board.squares[x][y].setPiece(null);
-        }
-    }
-
     public static void setPromotion(boolean promotion) {
         Game.promotion = promotion;
     }
@@ -166,6 +143,56 @@ public class Game {
             StatusResponse gameOver = new StatusResponse("The game is over dummy! You need to start a new game");
             return gameOver;
         }
+    }
+
+
+    /*
+     ************** Undo side effects in tandem with Memento ****************
+     */
+    public static StatusResponse undo() {
+        Move lastMove = Move.moves.get(Move.moves.size() - 1);
+        int x = lastMove.getEndX();
+        int y = lastMove.getEndY();
+        int prevX = lastMove.getX();
+        int prevY = lastMove.getY();
+        Player player = lastMove.getPlayer();
+        Board.squares[prevX][prevY].setPiece(lastMove.getPiece());
+        if (lastMove.capture) {
+            //if (lastMove.passant)
+            Piece piece = lastMove.getCapturedPiece();
+            Board.squares[x][y].setPiece(piece);
+            player.restorePiece(piece);
+        } else if (lastMove.castle) {
+            King king;
+            if (y == 0){
+                king = (King) Board.squares[prevX][2].getPiece();
+                Board.squares[prevX][4].setPiece(king);
+                king.setXY(prevX, 4);
+                Board.squares[prevX][2].setPiece(null);
+            } else {
+                king = (King) Board.squares[prevX][6].getPiece();
+                Board.squares[prevX][4].setPiece(king);
+                king.setXY(prevX, 4);
+                Board.squares[prevX][6].setPiece(null);
+            }
+        } else if (lastMove.passant){
+            Piece piece = lastMove.getCapturedPiece();
+            player.restorePiece(piece);
+            if (piece.getColor().equals("white")){
+                Board.squares[x+1][y].setPiece(piece);
+            } else {
+                Board.squares[x-1][y].setPiece(piece);
+            }
+        } else {
+            Board.squares[x][y].setPiece(null);
+        }
+        boolean isCheck = false;
+        Move.moves.remove(lastMove);
+        if (Move.moves.size() > 2){
+            isCheck = Move.moves.get(Move.moves.size() - 1).checking;
+        }
+        //Player otherPlayer = Game.getOtherTeam(player);
+        return new StatusResponse(true, isCheck, player);
     }
 }
 //        } else {
