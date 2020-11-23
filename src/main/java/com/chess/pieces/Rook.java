@@ -57,6 +57,7 @@ public class Rook extends Piece {
     */
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
+        Board board = Board.boardConstructor();
         int condition1 = endX - x;
         int condition2 = endY - y;
         if (condition1 == 0 || condition2 == 0) {
@@ -76,7 +77,8 @@ public class Rook extends Piece {
                 while (count != 1 && count != -1) {
                     between = between + check;
                     //System.out.println("Checking Square " + x + between + ". Count- " + count);
-                    if (Board.squares[x][between].hasPiece()) {
+                    //if (Board.squares[x][between].hasPiece()) {
+                    if (board.getSquare(x, between).hasPiece()) {
                         return false;
                     }
                     count = count - check;
@@ -94,7 +96,7 @@ public class Rook extends Piece {
                 while (count != 1 && count != -1) {
                     between = between + check;
                     //System.out.println("Checking Square " + between + y + ". Count- " + count);
-                    if (Board.squares[between][y].hasPiece()) {
+                    if (board.getSquare(between, y).hasPiece()) {
                         return false;
                     }
                     count = count - check;

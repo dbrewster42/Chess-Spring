@@ -59,6 +59,7 @@ public class Pawn extends Piece {
     */
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
+        Board board = Board.boardConstructor();
         int direction = endX - x;
         // System.out.println(this.color + this.type + this.name);
         if (this.name.equals("wpawn.png")) {
@@ -68,7 +69,7 @@ public class Pawn extends Piece {
             if (Math.abs(y - endY) == 1) {
                 if (direction == 1){
                     ///capture move
-                    if (Board.squares[endX][endY].hasPiece()) {
+                    if (board.getSquare(endX, endY).hasPiece()) {
                         if (endX == 0 || endX == 7) {
                             Game.setPromotion(true);
                         }
@@ -79,7 +80,7 @@ public class Pawn extends Piece {
             return false;
         }
         if (direction == 1) {
-            if (Board.squares[endX][endY].hasPiece()) {
+            if (board.getSquare(endX, endY).hasPiece()) {
                 return false;
             }
             if (endX == 0 || endX == 7) {
@@ -93,7 +94,7 @@ public class Pawn extends Piece {
                 if (endX == 4){
                     checkX = 5;
                 }
-                if (Board.squares[endX][endY].hasPiece() || Board.squares[checkX][endY].hasPiece()) {
+                if (board.getSquare(endX, endY).hasPiece() || board.getSquare(endX, endY).hasPiece()) {
                     return false;
                 }
                 return true;

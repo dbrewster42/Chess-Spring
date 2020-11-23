@@ -21,6 +21,7 @@ public class Status {
     }
     public static boolean movedIntoCheck(Player player, Piece piece, int start, int end){
         System.out.println("Status.java movedIntoCheck()");
+        Board board = Board.boardConstructor();
         int endX = end / 10;
         int endY = end % 10;
         // if King moved, check all opposing pieces to see if they can check
@@ -53,8 +54,9 @@ public class Status {
                     int checkY = y + betweenY;
                     while (checkY < 8 && checkY > -1){
                         System.out.println("Status.moveIntoCheck horizontal " + x + checkY);
-                        if (Board.squares[x][checkY].hasPiece()){
-                            Piece checkPiece = Board.squares[x][checkY].getPiece();
+                        if (board.getSquare(x, checkY).hasPiece()){
+                            //Piece checkPiece = Board.squares[x][checkY].getPiece();
+                            Piece checkPiece =board.getSquare(x, checkY).getPiece();
                             if (checkPiece.getColor().equals(piece.getColor())){
                                 return false;
                             } else {
@@ -82,8 +84,8 @@ public class Status {
                     int checkX = x + betweenX;
                     while (checkX < 8 && checkX > -1) {
                         System.out.println("Status.moveIntoCheck vertical " + checkX + y);
-                        if (Board.squares[checkX][y].hasPiece()) {
-                            Piece checkPiece = Board.squares[checkX][y].getPiece();
+                        if (board.getSquare(checkX, y).hasPiece()) {
+                            Piece checkPiece = board.getSquare(checkX, y).getPiece();
                             if (checkPiece.getColor().equals(piece.getColor())) {
                                 return false;
                             } else {
@@ -112,11 +114,11 @@ public class Status {
                     int checkY = y + betweenY;
                     while (checkX < 8 && checkX > -1 && checkY < 8 && checkY > -1) {
                         System.out.println("Status.moveIntoCheck diagonal " + checkX + checkY);
-                        if (Board.squares[checkX][checkY].hasPiece()) {
+                        if (board.getSquare(checkX, checkY).hasPiece()) {
                             if (checkX == endX && checkY == endY){
                                 return false;
                             }
-                            Piece checkPiece = Board.squares[checkX][checkY].getPiece();
+                            Piece checkPiece = board.getSquare(checkX, checkY).getPiece();
                             if (checkPiece.getColor().equals(piece.getColor())) {
                                 return false;
                             } else {
@@ -167,10 +169,11 @@ public class Status {
     }
     public static List<Attacker> allEnemies(Piece piece){
         List<Attacker> allEnemies = new ArrayList<>();
+        Board board = Board.boardConstructor();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (Board.squares[i][j].hasPiece()) {
-                    Piece enemyPiece = Board.squares[i][j].getPiece();
+                if (board.getSquare(i, j).hasPiece()) {
+                    Piece enemyPiece = board.getSquare(i, j).getPiece();
                     if (enemyPiece.getColor().equals(piece.getColor())) {
                         continue;
                     } else {
@@ -186,16 +189,17 @@ public class Status {
     public static boolean defeatAllChecks(Player player, Piece piece, int endX, int endY){
         System.out.println("Status.java defeatAllChecks()");
         Attacker original = attackers[0];
+        Board board = Board.boardConstructor();
         ///
         Piece oldPiece = null;
-        if (Board.squares[endX][endY].hasPiece()) {
-            oldPiece = Board.squares[endX][endY].getPiece();
+        if (board.getSquare(endX, endY).hasPiece()) {
+            oldPiece = board.getSquare(endX, endY).getPiece();
         }
         /// makes attempted move and validates if out of check
-        Board.squares[endX][endY].setPiece(piece);
+        board.getSquare(endX, endY).setPiece(piece);
         ///
         if (!defeatCheck(player, piece, endX, endY, original)){
-            Board.squares[endX][endY].setPiece(oldPiece);
+            board.getSquare(endX, endY).setPiece(oldPiece);
             System.out.println("Status.199 did not defeat check by the Checker, get it together!");
             return false;
         }
@@ -206,11 +210,11 @@ public class Status {
                 continue;
             } else {
                 System.out.println("Status.defeatAllChecks().208 did not defeat check by " + each.getPiece().getType()  + " at " + each.getX() + each.getY() + " to " + endX + endY);
-                Board.squares[endX][endY].setPiece(oldPiece);
+                board.getSquare(endX, endY).setPiece(oldPiece);
                 return false;
             }
         }
-        Board.squares[endX][endY].setPiece(oldPiece);
+        board.getSquare(endX, endY).setPiece(oldPiece);
         return true;
         //true means not checkmate
     }
@@ -278,7 +282,8 @@ public class Status {
         } else if (attacker.y - kingY < 0) {
             yDirection = 1;
         }
-        Board.squares[kingX][kingY].setPiece(null);
+        Board board = Board.boardConstructor();
+        board.getSquare(kingX, kingY).setPiece(null);
         List<Integer> narrowedMoves = new ArrayList<>();
         /// Checking if king can move
         /////////NEED TO SET KING TO NULL SO HE DOESN"T BLOCK VALID MOVE THAT IS STILL IN CHECK
@@ -298,11 +303,11 @@ public class Status {
                 //return false;
             }
         }
-        Board.squares[kingX][kingY].setPiece(king);
+         board.getSquare(kingX, kingY).setPiece(king);
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (Board.squares[i][j].hasPiece()) {
-                    Piece piece = Board.squares[i][j].getPiece();
+                if (board.getSquare(i, j).hasPiece()) {
+                    Piece piece = board.getSquare(i, j).getPiece();
                     //System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
                     if (piece.getColor().equals(color)) {
                         if (piece.getType().equals(Type.KING)) {
@@ -408,10 +413,11 @@ public class Status {
         // int kingY = king.getY();
         int[] possibleMoves = king.canMakeMove();
         int a = 0;
+        Board board = Board.boardConstructor();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (Board.squares[i][j].hasPiece()) {
-                    Piece piece = Board.squares[i][j].getPiece();
+                if (board.getSquare(i, j).hasPiece()) {
+                    Piece piece = board.getSquare(i, j).getPiece();
                     if (piece.getColor().equals(color)) {
                         if (piece.getType().equals(Type.KING)) {
                             continue;

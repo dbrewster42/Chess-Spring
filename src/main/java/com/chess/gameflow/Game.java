@@ -25,6 +25,14 @@ public class Game {
         players[1] = player2;
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
     /*
      ************** Get other Team ****************
      */
@@ -47,22 +55,23 @@ public class Game {
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Board board = Board.boardConstructor();
-        Square initial = Board.squares[x][y];
+        //Square initial = Board.squares[x][y];
+        Square initial = board.getSquare(x, y);
         Piece piece = initial.getPiece();
         System.out.println(player.getName() +  " moves the " + piece.getType() + " from " + pieceSelection + " to " + action);
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
         if (piece.isValidMove(x, y, endX, endY)) {
-            if (Board.squares[endX][endY].hasPiece()) {
-                if (player.hasPiece(Board.squares[endX][endY].getPiece())) {
+            if (board.getSquare(endX, endY).hasPiece()) {
+                if (player.hasPiece(board.getSquare(endX, endY).getPiece())) {
                     throw new InvalidMoveException("Invalid choice. You already have a piece there!");
                 }
             }
             //// Must move out of check if in check
             if (Status.isCheck()) {
                 //if (Status.defeatCheck(player, piece, endX, endY)) {
-                Board.squares[x][y].setPiece(null);
+                board.getSquare(x, y).setPiece(null);
                 if (Status.defeatAllChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     Status.setCheck(false);
@@ -70,7 +79,7 @@ public class Game {
                     if (piece.getType().equals(Type.KING)){
                         piece.isValidMove(x, y, x, y);
                     }
-                    Board.squares[x][y].setPiece(piece);
+                    board.getSquare(x, y).setPiece(piece);
                     System.out.println(piece.getType() + " is back at " + x + y);
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
@@ -92,13 +101,13 @@ public class Game {
              ****** checks if a capture took place and if so, sets enemy piece to null ******
              */
             Player otherPlayer = getOtherTeam(player);
-            if (Board.squares[endX][endY].hasPiece()) {
-                Piece capturedPiece = Board.squares[endX][endY].getPiece();
+            if (board.getSquare(endX, endY).hasPiece()) {
+                Piece capturedPiece = board.getSquare(endX, endY).getPiece();
                 move.addCapture(capturedPiece);
                 otherPlayer.killPiece(capturedPiece);
             }
             //moves from old spot to new position
-            Board.squares[x][y].setPiece(null);
+            board.getSquare(x, y).setPiece(null);
             board.getSquare(endX, endY).setPiece(piece);
 
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
@@ -156,35 +165,46 @@ public class Game {
         int prevX = lastMove.getX();
         int prevY = lastMove.getY();
         Player player = lastMove.getPlayer();
-        Board.squares[prevX][prevY].setPiece(lastMove.getPiece());
+        Board board = Board.boardConstructor();
+        board.getSquare(prevX, prevY).setPiece(lastMove.getPiece());
         if (lastMove.capture) {
             //if (lastMove.passant)
             Piece piece = lastMove.getCapturedPiece();
-            Board.squares[x][y].setPiece(piece);
+            board.getSquare(x, y).setPiece(piece);
             player.restorePiece(piece);
         } else if (lastMove.castle) {
             King king;
             if (y == 0){
-                king = (King) Board.squares[prevX][2].getPiece();
-                Board.squares[prevX][4].setPiece(king);
+//                king = (King) Board.squares[prevX][2].getPiece();
+//                Board.squares[prevX][4].setPiece(king);
+//                king.setXY(prevX, 4);
+//                Board.squares[prevX][2].setPiece(null);
+                king = (King) board.getSquare(prevX, 2).getPiece();
+                board.getSquare(prevX, 4).setPiece(king);
                 king.setXY(prevX, 4);
-                Board.squares[prevX][2].setPiece(null);
+                board.getSquare(prevX, 2).setPiece(null);
             } else {
-                king = (King) Board.squares[prevX][6].getPiece();
-                Board.squares[prevX][4].setPiece(king);
+//                king = (King) Board.squares[prevX][6].getPiece();
+//                Board.squares[prevX][4].setPiece(king);
+//                king.setXY(prevX, 4);
+//                Board.squares[prevX][6].setPiece(null);
+                king = (King) board.getSquare(prevX, 6).getPiece();
+                board.getSquare(prevX, 4).setPiece(king);
                 king.setXY(prevX, 4);
-                Board.squares[prevX][6].setPiece(null);
+                board.getSquare(prevX, 6).setPiece(null);
             }
         } else if (lastMove.passant){
             Piece piece = lastMove.getCapturedPiece();
             player.restorePiece(piece);
             if (piece.getColor().equals("white")){
-                Board.squares[x+1][y].setPiece(piece);
+                board.getSquare(x+1, y);
+                //Board.squares[x+1][y].setPiece(piece);
             } else {
-                Board.squares[x-1][y].setPiece(piece);
+                board.getSquare(x-1, y);
+                //Board.squares[x-1][y].setPiece(piece);
             }
         } else {
-            Board.squares[x][y].setPiece(null);
+            board.getSquare(x, y).setPiece(null);
         }
         boolean isCheck = false;
         Move.moves.remove(lastMove);

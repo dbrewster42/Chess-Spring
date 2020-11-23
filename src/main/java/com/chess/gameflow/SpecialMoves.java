@@ -14,7 +14,8 @@ public class SpecialMoves {
     public static void makeSpecialMove(int pieceSelect, Player player){
         int x = pieceSelect / 10;
         int y = pieceSelect % 10;
-        Piece piece = Board.squares[x][y].getPiece();
+        Board board = Board.boardConstructor();
+        Piece piece = board.getSquare(x, y).getPiece();
         if (piece.getType().equals(Type.PAWN)) {
             if (isValidPassant(player, pieceSelect))
                 doPassant(player, pieceSelect);
@@ -41,16 +42,17 @@ public class SpecialMoves {
         }
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Piece piece = Board.squares[x][y].getPiece();
+        Board board = Board.boardConstructor();
+        Piece piece = board.getSquare(x, y).getPiece();
         if (piece.getType() == Type.ROOK) {
             if (x == 7 || x == 0) {
-                if (Board.squares[x][4].getPiece().getType() == Type.KING) {
+                if (board.getSquare(x, 4).getPiece().getType() == Type.KING) {
                     if (y == 0) {
                         int count = 3;
                         int betweenY = y;
                         while (count > 0) {
                             betweenY = betweenY + 1;
-                            if (Board.squares[x][betweenY].hasPiece()) {
+                            if (board.getSquare(x, betweenY).hasPiece()) {
                                 return false;
                             }
                             count = count - 1;
@@ -61,7 +63,7 @@ public class SpecialMoves {
                         int betweenY = y;
                         while (count > 0) {
                             betweenY = betweenY - 1;
-                            if (Board.squares[x][betweenY].hasPiece()) {
+                            if (board.getSquare(x, betweenY).hasPiece()) {
                                 return false;
                             }
                             count = count - 1;
@@ -92,8 +94,9 @@ public class SpecialMoves {
         //List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Piece piece = Board.squares[x][y].getPiece();
-        Piece theKing = Board.squares[x][4].getPiece();
+        Board board = Board.boardConstructor();
+        Piece piece = board.getSquare(x, y).getPiece();
+        Piece theKing = board.getSquare(x, 4).getPiece();
         King king = player.getKing();
 //        if (Status.movedIntoCheck(player, king, pieceSelection, action)){
 ////            if (piece.getType().equals(Type.KING)){
@@ -106,22 +109,22 @@ public class SpecialMoves {
             if (Status.movedIntoCheck(player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
-            Board.squares[x][3].setPiece(piece);
-            Board.squares[x][2].setPiece(theKing);
+            board.getSquare(x, 3).setPiece(piece);
+            board.getSquare(x, 2).setPiece(theKing);
             king.setXY(x, 2);
-            Board.squares[x][0].setPiece(null);
-            Board.squares[x][4].setPiece(null);
+            board.getSquare(x, 0).setPiece(null);
+            board.getSquare(x, 4).setPiece(null);
             Move move = new Move(player, piece, x, y, x, 3, true);
         } else if (y == 7) {
             int action = x * 10 + y;
             if (Status.movedIntoCheck(player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
-            Board.squares[x][5].setPiece(piece);
-            Board.squares[x][6].setPiece(theKing);
+            board.getSquare(x, 5).setPiece(piece);
+            board.getSquare(x, 6).setPiece(theKing);
             king.setXY(x, 6);
-            Board.squares[x][7].setPiece(null);
-            Board.squares[x][4].setPiece(null);
+            board.getSquare(x, 7).setPiece(null);
+            board.getSquare(x, 4).setPiece(null);
             // String move = player.getName() + " has performed a short side castle";
             Move move = new Move(player, piece, x, y, x, 5, true);
             //moves.add(move);
@@ -133,9 +136,10 @@ public class SpecialMoves {
 
     public static boolean isValidPassant(Player player, int pieceSelection) {
         List<Move> moves = Move.moves;
+        Board board = Board.boardConstructor();
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Piece piece = Board.squares[x][y].getPiece();
+        Piece piece = board.getSquare(x, y).getPiece();
         Move lastMove = moves.get(moves.size() - 1);
         int currentX = lastMove.getEndX();
         int currentY = lastMove.getEndY();
@@ -161,7 +165,8 @@ public class SpecialMoves {
         List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Piece piece = Board.squares[x][y].getPiece();
+        Board board = Board.boardConstructor();
+        Piece piece = board.getSquare(x, y).getPiece();
         Move lastMove = moves.get(moves.size() - 1);
         int prevX = lastMove.getX();
         int currentX = lastMove.getEndX();
@@ -170,12 +175,12 @@ public class SpecialMoves {
         if (currentX - prevX > 0) {
             endX = x - 1;
         }
-        Piece capturedPiece = Board.squares[currentX][currentY].getPiece();
+        Piece capturedPiece = board.getSquare(currentX, currentY).getPiece();
         Player otherPlayer = Game.getOtherTeam(player);
         otherPlayer.killPiece(capturedPiece);
-        Board.squares[x][y].setPiece(null);
-        Board.squares[currentX][currentY].setPiece(null);
-        Board.squares[endX][currentY].setPiece(piece);
+        board.getSquare(x, y).setPiece(null);
+        board.getSquare(currentX, currentY).setPiece(null);
+        board.getSquare(endX, currentY).setPiece(piece);
         Move move = new Move(player, piece, x, y, endX, currentY);
         move.addPassant();
         move.addCapture(capturedPiece);

@@ -52,6 +52,7 @@ public class Bishop extends Piece {
     */
     @Override
     public boolean isValidMove(int x, int y, int endX, int endY) {
+        Board board = Board.boardConstructor();
         int width = x - endX;
         int length = y - endY;
         if (Math.abs(width) != Math.abs(length)) {
@@ -78,7 +79,7 @@ public class Bishop extends Piece {
             betweenX = betweenX - checkX;
             betweenY = betweenY - checkY;
             //System.out.println("Checking Square " + betweenX + betweenY + " . Count- " + count);
-            if (Board.squares[betweenX][betweenY].hasPiece()) {
+            if (board.getSquare(betweenX, betweenY).hasPiece()) {
                 return false;
             }
 

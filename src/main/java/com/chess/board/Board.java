@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
-    final public static Square[][] squares = new Square[8][8];
+    private Square[][] squares = new Square[8][8];
     private static Board uni;
 
     public Board() {

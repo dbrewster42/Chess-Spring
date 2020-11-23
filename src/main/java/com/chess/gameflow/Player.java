@@ -39,12 +39,13 @@ public class Player {
      ************** Initialization of All Pieces ****************
      */
     public static List<Piece> takePieces(int start) {
+        Board board = Board.boardConstructor();
         List<Piece> team = new ArrayList<Piece>(16);
         //int end = start + 2;
         for (int i = start; i < start + 2; i++) {
             for (int j = 0; j < 8; j++) {
                 //System.out.println("1 " + Integer.toHexString(System.identityHashCode(Board.squares[i][j].getPiece())));
-                team.add(Board.squares[i][j].getPiece());
+                team.add(board.getSquare(i, j).getPiece());
                 //System.out.println("2 " + Integer.toHexString(System.identityHashCode(team.get(team.size()-1))));
             }
         }

@@ -60,7 +60,8 @@ public class Move {
     }
 
     public char getColumn(int y){
-        String column =  "abcdefgh";
+//        String column =  "abcdefgh";
+        String column =  "ABCDEFGH";
         char returnValue = column.charAt(y);
         return returnValue;
     }

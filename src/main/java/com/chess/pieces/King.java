@@ -80,6 +80,7 @@ public class King extends Piece {
         int count = 0;
         int checkX = this.x - 1;
         int checkY = this.y - 1;
+        Board board = Board.boardConstructor();
         System.out.println("King's location: " + this.x + "" + this.y + " count: " + count);
         for (int i = checkX; i < checkX + 3; i++) {
             if (i < 0 || i > 7) {
@@ -90,8 +91,8 @@ public class King extends Piece {
                     continue;
                 }
                 //System.out.println("i " + i + " j " + j);
-                if (Board.squares[i][j].hasPiece()) {
-                    if (Board.squares[i][j].getPiece().getColor().equals(this.color)) {
+                if (board.getSquare(i, j).hasPiece()) {
+                    if (board.getSquare(i, j).getPiece().getColor().equals(this.color)) {
                         continue;
                     } else {
                         System.out.println("King checking square " + i + "" + j);
