@@ -7,6 +7,9 @@ import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Game {
     public static Player player1;
@@ -17,18 +20,40 @@ public class Game {
     private Status status;
 //    private static int id = 0;
     public Board board;
+    public List<Move> moves;
+    //private Move move;
 
     public Game(int id, String name, String name2){
         //Status.setStatus();
         this.status = new Status();
         this.id = id;
         board = new Board(id);
+        this.moves = new ArrayList<Move>();
         //id++;
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
         //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
         players[0] = player1;
         players[1] = player2;
+    }
+
+    /*
+     ************** Prints All Moves ****************
+     */
+//    public static void printMoves() {
+//        int count = 1;
+//        for (Move i : moves) {
+//            System.out.println(count + ". " + i.getMessage());
+//            count++;
+//        }
+//        System.out.println(" ");
+//    }
+    public List<String> returnMoveMessages(){
+        List<String> messages = new ArrayList<String>();
+        for (Move i : moves) {
+            messages.add(i.getMessage());
+        }
+        return messages;
     }
 
     public Status getStatus() {
@@ -108,7 +133,7 @@ public class Game {
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             Move move = new Move(player, piece, x, y, endX, endY);
-
+            moves.add(move);
             if (promotion){
                 piece = player.pawnPromotion(piece);
                 move.addPromoted();
@@ -156,7 +181,7 @@ public class Game {
                 player = players[0];
             }
             if (boardRequest.getEnd() == 999) {
-                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player, status.isCheck());
+                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player, status.isCheck(), moves);
             } else {
                 movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
@@ -177,7 +202,7 @@ public class Game {
      ************** Undo side effects in tandem with Memento ****************
      */
     public StatusResponse undo() {
-        Move lastMove = Move.moves.get(Move.moves.size() - 1);
+        Move lastMove = moves.get(moves.size() - 1);
         int x = lastMove.getEndX();
         int y = lastMove.getEndY();
         int prevX = lastMove.getX();
@@ -225,9 +250,9 @@ public class Game {
             board.getSquare(x, y).setPiece(null);
         }
         boolean isCheck = false;
-        Move.moves.remove(lastMove);
-        if (Move.moves.size() > 2){
-            isCheck = Move.moves.get(Move.moves.size() - 1).checking;
+        moves.remove(lastMove);
+        if (moves.size() > 2){
+            isCheck = moves.get(moves.size() - 1).checking;
         }
         //Player otherPlayer = Game.getOtherTeam(player);
         return new StatusResponse(true, isCheck, player);

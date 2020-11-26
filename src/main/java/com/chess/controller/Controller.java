@@ -54,7 +54,7 @@ public class Controller {
 //        game = new Game(gameID, name1, name2);
 //        gameID++;
         game = Manager.createGame(name1, name2);
-        Move.moves = new ArrayList<>();
+        //Move.moves = new ArrayList<>();
         Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
@@ -100,7 +100,8 @@ public class Controller {
     @GetMapping("/{id}/moves")
     public MovesResponse displayMoves(@PathVariable int id){
         ///must separate out moves lists
-        MovesResponse movesResponse = new MovesResponse(Move.returnMoveMessages());
+        Game game = Manager.getGame(id);
+        MovesResponse movesResponse = new MovesResponse(game.returnMoveMessages());
         return movesResponse;
     }
 

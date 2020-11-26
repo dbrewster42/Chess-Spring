@@ -11,14 +11,14 @@ public class SpecialMoves {
     /*
      ************** Decides which Special Move is applicable ****************
      */
-    public static void makeSpecialMove(int pieceSelect, Player player, boolean isCheck){
+    public static void makeSpecialMove(int pieceSelect, Player player, boolean isCheck, List<Move> moves){
         int x = pieceSelect / 10;
         int y = pieceSelect % 10;
         Board board = Board.boardConstructor();
         Piece piece = board.getSquare(x, y).getPiece();
         if (piece.getType().equals(Type.PAWN)) {
-            if (isValidPassant(player, pieceSelect))
-                doPassant(player, pieceSelect);
+            if (isValidPassant(player, pieceSelect, moves))
+                doPassant(player, pieceSelect, moves);
             else throw new InvalidMoveException("This does not meet the en Passant conditions");
         } else if (piece.getType().equals(Type.ROOK)) {
             if (isValidCastle(player, pieceSelect, isCheck))
@@ -134,8 +134,8 @@ public class SpecialMoves {
         System.out.println("SpecialMoves.java " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
     }
 
-    public static boolean isValidPassant(Player player, int pieceSelection) {
-        List<Move> moves = Move.moves;
+    public static boolean isValidPassant(Player player, int pieceSelection, List<Move> moves) {
+        //List<Move> moves = Move.moves;
         Board board = Board.boardConstructor();
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
@@ -161,8 +161,8 @@ public class SpecialMoves {
         }
     }
 
-    public static void doPassant(Player player, int pieceSelection) {
-        List<Move> moves = Move.moves;
+    public static void doPassant(Player player, int pieceSelection, List<Move> moves) {
+        //List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Board board = Board.boardConstructor();

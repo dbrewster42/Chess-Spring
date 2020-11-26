@@ -17,7 +17,7 @@ public class Move {
     private String message;
     private Player player;
     private Piece piece, capturedPiece;
-    public static List<Move> moves = new ArrayList<Move>();
+//    public List<Move> moves = new ArrayList<Move>();
 
     public Move(Player player, Piece piece, int x, int y, int endX, int endY) {
         this(player, piece, x, y, endX, endY, false);
@@ -43,21 +43,10 @@ public class Move {
             message = player.getName() + " has performed a short side castle";
         }
         //System.out.println("Making moves " + piece.getType());
-        moves.add(this);
+        //moves.add(this);
 
     }
 
-    /*
-    ************** Prints All Moves ****************
-    */
-    public static void printMoves() {
-        int count = 1;
-        for (Move i : moves) {
-            System.out.println(count + ". " + i.getMessage());
-            count++;
-        }
-        System.out.println(" ");
-    }
 
     public char getColumn(int y){
 //        String column =  "abcdefgh";
@@ -66,13 +55,7 @@ public class Move {
         return returnValue;
     }
 
-    public static List<String> returnMoveMessages(){
-        List<String> messages = new ArrayList<String>();
-        for (Move i : moves) {
-            messages.add(i.getMessage());
-        }
-        return messages;
-    }
+
 
     public void addCheckmate(){
         message += " CHECKMATE! " + player.getName() + " wins!!!!!";
