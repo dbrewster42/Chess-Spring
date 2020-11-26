@@ -106,7 +106,7 @@ public class SpecialMoves {
 //        }
         if (y == 0) {
             int action = x * 10 + y;
-            if (Status.movedIntoCheck(player, king, pieceSelection, action)){
+            if (Checking.movedIntoCheck(player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             board.getSquare(x, 3).setPiece(piece);
@@ -117,7 +117,7 @@ public class SpecialMoves {
             Move move = new Move(player, piece, x, y, x, 3, true);
         } else if (y == 7) {
             int action = x * 10 + y;
-            if (Status.movedIntoCheck(player, king, pieceSelection, action)){
+            if (Checking.movedIntoCheck(player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             board.getSquare(x, 5).setPiece(piece);

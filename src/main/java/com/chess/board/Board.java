@@ -10,10 +10,14 @@ import java.util.List;
 public class Board {
     private Square[][] squares = new Square[8][8];
     private static Board uni;
+    private int id;
 
-    public Board() {
+    public Board(int id) {
+        //uni = null;
+        this.id = id;
         //dynamically creates board composed of 64 squares
         generateBoard();
+        showDetailedBoard();
     }
 
     /*
@@ -21,10 +25,13 @@ public class Board {
      */
     public static Board boardConstructor() {
         if (uni == null) {
-            uni = new Board();
+            uni = new Board(1);
         }
         return uni;
     }
+//    public Board getBoard(){
+//        return this;
+//    }
 
     //creates board
     public Square[][] generateBoard() {
@@ -77,7 +84,7 @@ public class Board {
     }
 
     // Returns Board for API Call
-    public List<Response> returnBoard(){
+    public List<Response> returnBoard() {
         //showDetailedBoard();
         List<Response> returnValue = new ArrayList<Response>(64);
         for (int i = 0; i < 8; i++) {
@@ -92,29 +99,28 @@ public class Board {
         }
         return returnValue;
     }
-}
 
-//    /*
-//     **********Prints Board to console With Each Square Labeled************
-//     */
-//    public void showDetailedBoard() {
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                if (j == 7){
-//                    if (squares[i][j].hasPiece()){
-//                        System.out.println(i + "" + j + ":" + squares[i][j].printPiece());
-//                    }
-//                    else{
-//                        System.out.println(i + "" + j + ":    ");
-//                    }
-//                }
-//                else {
-//                    if (squares[i][j].hasPiece()) {
-//                        System.out.print(i + "" + j + ": " + squares[i][j].printPiece() + ", ");
-//                    } else {
-//                        System.out.print(i + "" + j + ":       ");
-//                    }
-//                }
-//            }
-//        }
-//    }
+
+    /*
+     **********Prints Board to console With Each Square Labeled************
+     */
+    public void showDetailedBoard() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (j == 7) {
+                    if (squares[i][j].hasPiece()) {
+                        System.out.println(i + "" + j + ":" + squares[i][j].printPiece());
+                    } else {
+                        System.out.println(i + "" + j + ":    ");
+                    }
+                } else {
+                    if (squares[i][j].hasPiece()) {
+                        System.out.print(i + "" + j + ": " + squares[i][j].printPiece() + ", ");
+                    } else {
+                        System.out.print(i + "" + j + ":       ");
+                    }
+                }
+            }
+        }
+    }
+}

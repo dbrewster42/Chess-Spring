@@ -13,16 +13,34 @@ public class Game {
     public static Player player2;
     public static Player[] players = new Player[2];
     private static boolean promotion = false;
-    Board board;
+    private final int id;
+    private Status status;
+//    private static int id = 0;
+    public Board board;
 
-    public Game(String name, String name2){
-        Status.setStatus();
-        board = new Board();
+    public Game(int id, String name, String name2){
+        //Status.setStatus();
+        Status status = new Status();
+        this.id = id;
+        board = new Board(id);
+        //id++;
         Player player1 = Player.createPlayer(name, true);
         Player player2 = Player.createPlayer(name2, false);
         //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
         players[0] = player1;
         players[1] = player2;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public Board getBoard() {
@@ -83,7 +101,7 @@ public class Game {
                     System.out.println(piece.getType() + " is back at " + x + y);
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
-            } else if (Status.movedIntoCheck(player, piece, pieceSelection, action)){
+            } else if (Checking.movedIntoCheck(player, piece, pieceSelection, action)){
                 if (piece.getType().equals(Type.KING)){
                     piece.isValidMove(x, y, x, y);
                 }
@@ -112,11 +130,11 @@ public class Game {
 
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
-            if (Status.didCheck(player, piece, endX, endY)) {
+            if (Checking.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
                 Status.setCheck(true);
                 System.out.println("Game.java Check: " + Status.isCheck());
-                if (Status.didCheckMate(otherPlayer)) {
+                if (Checking.didCheckMate(otherPlayer)) {
                     move.addCheckmate();
                     Status.setCheckMate(true);
                     Status.setActive(false);
@@ -129,7 +147,7 @@ public class Game {
         }
     }
 
-    public static StatusResponse run(BoardRequest boardRequest){
+    public StatusResponse run(BoardRequest boardRequest){
         System.out.println("");
         System.out.println("");
         if (Status.isActive()) {

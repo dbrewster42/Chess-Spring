@@ -1,10 +1,7 @@
 package com.chess.controller;
 
 import com.chess.board.*;
-import com.chess.gameflow.Game;
-import com.chess.gameflow.Move;
-import com.chess.gameflow.Player;
-import com.chess.gameflow.Status;
+import com.chess.gameflow.*;
 import com.chess.models.requests.BoardRequest;
 import com.chess.models.requests.PlayerRequest;
 import com.chess.models.requests.StatusRequest;
@@ -24,7 +21,9 @@ import java.util.List;
 @RequestMapping("/game")
 public class Controller {
     Game game;
-    Board board = Board.boardConstructor();
+    Board board;
+//    private static int gameID = 0;
+    //Board board = Board.boardConstructor();
 
 //    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
 //            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
@@ -34,10 +33,13 @@ public class Controller {
     public List<Response> createPlayer(@RequestBody PlayerRequest request){
 //        Status.setStatus();
 //        board.generateBoard();
-        game = new Game(request.getName1(), request.getName2());
+//        game = new Game(gameID, request.getName1(), request.getName2());
+//        gameID++;
+        game = Manager.createGame(request.getName1(), request.getName2());
+        Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
-        StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1);
+        StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1, game.getId());
         returnValue.add(status);
         return returnValue;
     }
@@ -48,8 +50,11 @@ public class Controller {
 //        board.generateBoard();
         String name1 = Game.players[0].getName();
         String name2 = Game.players[1].getName();
-        game = new Game(name1, name2);
+//        game = new Game(gameID, name1, name2);
+//        gameID++;
+        game = Manager.createGame(name1, name2);
         Move.moves = new ArrayList<>();
+        Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
         StatusResponse status = new StatusResponse(true, false, player1);
@@ -57,25 +62,30 @@ public class Controller {
         return returnValue;
     }
 
-    @PostMapping
-    public List<Response> makeMove(@RequestBody BoardRequest boardRequest) {
+    @PostMapping("/{id}")
+    public List<Response> makeMove(@PathVariable int id, @RequestBody BoardRequest boardRequest) {
         //System.out.println(boardRequest.getStart() + " HOWDY AND HELLO THERE NEIGHBOR " + boardRequest.getEnd() + "  " + boardRequest.isWhite());
-        StatusResponse status = Game.run(boardRequest);
+        Game game = Manager.getGame(id);
+        StatusResponse status = game.run(boardRequest);
+        Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
         return returnValue;
     }
 
-    @PostMapping("/undo")
-    public List<Response> undo(){
-        StatusResponse status = Game.undo();
+    @PostMapping("/{id}/undo")
+    public List<Response> undo(@PathVariable int id){
+        Game game = Manager.getGame(id);
+        StatusResponse status = game.undo();
+        Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         returnValue.add(status);
         return returnValue;
     }
 
-    @PostMapping("/end")
-    public StatusResponse endGame(@RequestBody StatusRequest statusRequest){
+    @PostMapping("/{id}/end")
+    public StatusResponse endGame(@PathVariable int id, @RequestBody StatusRequest statusRequest){
+        Game game = Manager.getGame(id);
         Status.setActive(false);
         if (statusRequest.isForfeit()){
             StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
@@ -85,8 +95,9 @@ public class Controller {
         return statusResponse;
     }
 
-    @GetMapping("/moves")
-    public MovesResponse displayMoves(){
+    @GetMapping("/{id}/moves")
+    public MovesResponse displayMoves(@PathVariable int id){
+        ///must separate out moves lists
         MovesResponse movesResponse = new MovesResponse(Move.returnMoveMessages());
         return movesResponse;
     }

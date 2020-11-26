@@ -10,12 +10,12 @@ public class StatusResponse extends Response {
     private String playerName;
     //private Piece[] team;
     private boolean isWhite;
+    private int id;
 
     public StatusResponse(String message){
         this.active = false;
         this.message = message;
     }
-
     public StatusResponse(boolean active, boolean check, Player player) {
         this.active = active;
         this.check = check;
@@ -23,6 +23,14 @@ public class StatusResponse extends Response {
         this.isWhite = player.isWhite();
         //this.team = player.getTeam();
         //System.out.println(this.check + " 1234567890 " + playerName);
+    }
+
+    public StatusResponse(boolean active, boolean check, Player player, int id) {
+        this.active = active;
+        this.check = check;
+        this.playerName = player.getName();
+        this.isWhite = player.isWhite();
+        this.id = id;
     }
 
     public boolean isActive() {
@@ -57,6 +65,13 @@ public class StatusResponse extends Response {
         this.playerName = playerName;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 //    public Piece[] getTeam() {
 //        return team;
 //    }
