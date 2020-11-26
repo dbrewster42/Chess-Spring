@@ -39,8 +39,9 @@ public class Controller {
         Board board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
         Player player1= Game.players[0];
-        StatusResponse status = new StatusResponse(Status.isActive(), Status.isCheck(), player1, game.getId());
-        returnValue.add(status);
+        Status status = game.getStatus();
+        StatusResponse statusResponse = new StatusResponse(status.isActive(), status.isCheck(), player1, game.getId());
+        returnValue.add(statusResponse);
         return returnValue;
     }
 
@@ -86,7 +87,8 @@ public class Controller {
     @PostMapping("/{id}/end")
     public StatusResponse endGame(@PathVariable int id, @RequestBody StatusRequest statusRequest){
         Game game = Manager.getGame(id);
-        Status.setActive(false);
+        Status status = game.getStatus();
+        status.setActive(false);
         if (statusRequest.isForfeit()){
             StatusResponse statusResponse = new StatusResponse(statusRequest.getPlayerName() + " declares defeat! Game Over!");
             return statusResponse;

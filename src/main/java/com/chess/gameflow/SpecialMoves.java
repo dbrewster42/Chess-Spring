@@ -11,7 +11,7 @@ public class SpecialMoves {
     /*
      ************** Decides which Special Move is applicable ****************
      */
-    public static void makeSpecialMove(int pieceSelect, Player player){
+    public static void makeSpecialMove(int pieceSelect, Player player, boolean isCheck){
         int x = pieceSelect / 10;
         int y = pieceSelect % 10;
         Board board = Board.boardConstructor();
@@ -21,7 +21,7 @@ public class SpecialMoves {
                 doPassant(player, pieceSelect);
             else throw new InvalidMoveException("This does not meet the en Passant conditions");
         } else if (piece.getType().equals(Type.ROOK)) {
-            if (isValidCastle(player, pieceSelect))
+            if (isValidCastle(player, pieceSelect, isCheck))
                 doCastle(player, pieceSelect);
             else throw new InvalidMoveException("This does not meet valid Castling conditions");
         } else {
@@ -36,8 +36,8 @@ public class SpecialMoves {
     /*
     ************** Checks whether Castling Conditions are Valid ****************
     */
-    public static boolean isValidCastle(Player player, int pieceSelection) {
-        if (Status.isCheck()) {
+    public static boolean isValidCastle(Player player, int pieceSelection, boolean isCheck) {
+        if (isCheck) {
             throw new InvalidMoveException("You cannot Castle while in check");
         }
         int x = pieceSelection / 10;

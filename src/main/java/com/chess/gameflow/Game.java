@@ -20,7 +20,7 @@ public class Game {
 
     public Game(int id, String name, String name2){
         //Status.setStatus();
-        Status status = new Status();
+        this.status = new Status();
         this.id = id;
         board = new Board(id);
         //id++;
@@ -69,7 +69,7 @@ public class Game {
     /*
      ************** Move Your Piece ****************
      */
-    public static void movePiece(Player player, int pieceSelection, int action) {
+    public void movePiece(Player player, int pieceSelection, int action) {
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Board board = Board.boardConstructor();
@@ -87,12 +87,12 @@ public class Game {
                 }
             }
             //// Must move out of check if in check
-            if (Status.isCheck()) {
+            if (status.isCheck()) {
                 //if (Status.defeatCheck(player, piece, endX, endY)) {
                 board.getSquare(x, y).setPiece(null);
-                if (Status.defeatAllChecks(player, piece, endX, endY)){
+                if (Checking.defeatAllChecks(player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
-                    Status.setCheck(false);
+                    status.setCheck(false);
                 } else {
                     if (piece.getType().equals(Type.KING)){
                         piece.isValidMove(x, y, x, y);
@@ -132,12 +132,12 @@ public class Game {
             ///checks to see if the move has put the opposing King in check
             if (Checking.didCheck(player, piece, endX, endY)) {
                 move.addCheck();
-                Status.setCheck(true);
-                System.out.println("Game.java Check: " + Status.isCheck());
+                status.setCheck(true);
+                System.out.println("Game.java Check: " + status.isCheck());
                 if (Checking.didCheckMate(otherPlayer)) {
                     move.addCheckmate();
-                    Status.setCheckMate(true);
-                    Status.setActive(false);
+                    status.setCheckMate(true);
+                    status.setActive(false);
                 }
             }
             System.out.println(move.getMessage());
@@ -150,19 +150,19 @@ public class Game {
     public StatusResponse run(BoardRequest boardRequest){
         System.out.println("");
         System.out.println("");
-        if (Status.isActive()) {
+        if (status.isActive()) {
             Player player = players[1];
             if (boardRequest.isWhite()) {
                 player = players[0];
             }
             if (boardRequest.getEnd() == 999) {
-                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player);
+                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player, status.isCheck());
             } else {
-                Game.movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+                movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
-            StatusResponse returnValue = new StatusResponse(Status.isActive(), Status.isCheck(), otherPlayer);
-            if (Status.isCheckMate()) {
+            StatusResponse returnValue = new StatusResponse(status.isActive(), status.isCheck(), otherPlayer);
+            if (status.isCheckMate()) {
                 returnValue.setMessage("CHECKMATE!!!! " + player.getName() + " wins!!!!!");
             }
             return returnValue;
@@ -176,7 +176,7 @@ public class Game {
     /*
      ************** Undo side effects in tandem with Memento ****************
      */
-    public static StatusResponse undo() {
+    public StatusResponse undo() {
         Move lastMove = Move.moves.get(Move.moves.size() - 1);
         int x = lastMove.getEndX();
         int y = lastMove.getEndY();
