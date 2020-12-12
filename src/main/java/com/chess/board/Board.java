@@ -100,6 +100,9 @@ public class Board {
         return returnValue;
     }
 
+    public int getId() {
+        return id;
+    }
 
     /*
      **********Prints Board to console With Each Square Labeled************

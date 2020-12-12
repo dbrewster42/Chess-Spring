@@ -4,7 +4,6 @@ import com.chess.board.Board;
 import com.chess.pieces.King;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Type;
-import com.chess.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,11 +139,11 @@ public class Checking {
     /*
      ************** Checks for Check! After every move it scans the pieces to see if it has put the other team in check ****************
      */
-    public static boolean didCheck(Board board, Player player, Piece piece, int x, int y) {
+    public static boolean didCheck(Board board, Player player, Piece piece, int x, int y, Player otherTeam) {
         if (piece.getType().equals(Type.KING)) {
             return false;
         }
-        Player otherTeam = Game.getOtherTeam(player);
+        //Player otherTeam = Game.getOtherTeam(player);
         //System.out.println(otherTeam.getName() + " is he in check by the " + piece.getName());
         King king = otherTeam.getKing();
         //System.out.println(king.getName() + king.getColor());

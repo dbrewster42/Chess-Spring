@@ -6,7 +6,6 @@ import com.chess.models.requests.BoardRequest;
 import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
-import com.chess.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class Game {
     public Player player1;
     public Player player2;
-    public static Player[] players = new Player[2];
+    public Player[] players = new Player[2];
     private static boolean promotion = false;
     private final int id;
     private Status status;
@@ -25,27 +24,19 @@ public class Game {
     //private Move move;
 
 
-    public Game(int id, String name){
+    public Game(int id, String name, String name2){
+        //Status.setStatus();
         this.status = new Status();
         this.id = id;
         board = new Board(id);
         this.moves = new ArrayList<Move>();
+        //id++;
         player1 = Player.createPlayer(board, name, true);
+        player2 = Player.createPlayer(board, name2, false);
+        //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
+        players[0] = player1;
+        players[1] = player2;
     }
-
-//    public Game(int id, String name, String name2){
-//        //Status.setStatus();
-//        this.status = new Status();
-//        this.id = id;
-//        board = new Board(id);
-//        this.moves = new ArrayList<Move>();
-//        //id++;
-//        player1 = Player.createPlayer(board, name, true);
-//        player2 = Player.createPlayer(board, name2, false);
-//        //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
-//        players[0] = player1;
-//        players[1] = player2;
-//    }
 
     /*
      ************** Prints All Moves ****************
@@ -89,7 +80,7 @@ public class Game {
     /*
      ************** Get other Team ****************
      */
-    public static Player getOtherTeam(Player player) {
+    public Player getOtherTeam(Player player) {
         if (player.isWhite()) {
             return players[1];
         } else {
@@ -164,8 +155,8 @@ public class Game {
 
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
-            if (Checking.didCheck(board, player, piece, endX, endY)) {
-                move.addCheck();
+            if (Checking.didCheck(board, player, piece, endX, endY, otherPlayer)) {
+                move.addCheck(otherPlayer);
                 status.setCheck(true);
                 System.out.println("Game.java Check: " + status.isCheck());
                 if (Checking.didCheckMate(board, otherPlayer)) {

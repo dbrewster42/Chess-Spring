@@ -10,7 +10,7 @@ import com.chess.models.responses.MovesResponse;
 import com.chess.models.responses.PieceResponse;
 import com.chess.models.responses.Response;
 import com.chess.models.responses.StatusResponse;
-import com.chess.player.Player;
+import com.chess.gameflow.Player;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,32 +28,28 @@ public class Controller {
 //    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE },
 //            produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_RSS_XML_VALUE }
 //    )
-    @PostMapping("/server")
-    public String firstPlayer(@ResponseBody PlayerRequest request){
-        game = Manager.createGame(request.getName1());
 
+    @PostMapping("/players")
+    public List<Response> createPlayer(@RequestBody PlayerRequest request){
+        game = Manager.createGame(request.getName1(), request.getName2());
+        board = Manager.getBoard(game.getId());
+        List<Response> returnValue = board.returnBoard();
+        Player player1= game.players[0];
+        Status status = game.getStatus();
+        StatusResponse statusResponse = new StatusResponse(status.isActive(), status.isCheck(), player1, game.getId());
+        returnValue.add(statusResponse);
+        return returnValue;
     }
 
-//    @PostMapping("/players")
-//    public List<Response> createPlayer(@RequestBody PlayerRequest request){
-//        game = Manager.createGame(request.getName1(), request.getName2());
-//        board = Manager.getBoard(game.getId());
-//        List<Response> returnValue = board.returnBoard();
-//        Player player1= Game.players[0];
-//        Status status = game.getStatus();
-//        StatusResponse statusResponse = new StatusResponse(status.isActive(), status.isCheck(), player1, game.getId());
-//        returnValue.add(statusResponse);
-//        return returnValue;
-//    }
-
     @PostMapping("/restart")
-    public List<Response> restart(){
-        String name1 = Game.players[0].getName();
-        String name2 = Game.players[1].getName();
+    public List<Response> restart(@PathVariable int id){
+        game = Manager.getGame(id);
+        String name1 = game.players[0].getName();
+        String name2 = game.players[1].getName();
         game = Manager.createGame(name1, name2);
         board = Manager.getBoard(game.getId());
         List<Response> returnValue = board.returnBoard();
-        Player player1= Game.players[0];
+        Player player1= game.players[0];
         StatusResponse status = new StatusResponse(true, false, player1, game.getId());
         returnValue.add(status);
         return returnValue;
@@ -100,11 +96,11 @@ public class Controller {
         return movesResponse;
     }
 
-    @GetMapping("/pieces")
-    public PieceResponse displayPieces(Player player){
-        Player otherPlayer = Game.getOtherTeam(player);
-        PieceResponse pieceResponse = new PieceResponse(player.getTeam(), otherPlayer.getTeam());
-        return pieceResponse;
-    }
+//    @GetMapping("/pieces")
+//    public PieceResponse displayPieces(Player player){
+//        Player otherPlayer = game.getOtherTeam(player);
+//        PieceResponse pieceResponse = new PieceResponse(player.getTeam(), otherPlayer.getTeam());
+//        return pieceResponse;
+//    }
 }
 

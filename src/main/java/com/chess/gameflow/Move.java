@@ -1,7 +1,6 @@
 package com.chess.gameflow;
 
 import com.chess.pieces.Piece;
-import com.chess.player.Player;
 
 public class Move {
     private int x, y, endX, endY;
@@ -75,9 +74,8 @@ public class Move {
         message = message + " and has captured a " + capturedPiece.getType();
     }
 
-    public void addCheck() {
+    public void addCheck(Player otherPlayer) {
         checking = true;
-        Player otherPlayer = Game.getOtherTeam(player);
         message += ". " + player.getName() + " has put " + otherPlayer.getName() + " in check!";
     }
 

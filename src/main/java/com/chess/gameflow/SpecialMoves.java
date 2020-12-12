@@ -4,7 +4,6 @@ import com.chess.board.*;
 import com.chess.exceptions.InvalidMoveException;
 import com.chess.exceptions.MustDefeatCheckException;
 import com.chess.pieces.*;
-import com.chess.player.Player;
 
 import java.util.List;
 
@@ -171,7 +170,9 @@ public class SpecialMoves {
             endX = x - 1;
         }
         Piece capturedPiece = board.getSquare(currentX, currentY).getPiece();
-        Player otherPlayer = Game.getOtherTeam(player);
+        int id = board.getId();
+        Game game = Manager.getGame(id);
+        Player otherPlayer = game.getOtherTeam(player);
         otherPlayer.killPiece(capturedPiece);
         board.getSquare(x, y).setPiece(null);
         board.getSquare(currentX, currentY).setPiece(null);
