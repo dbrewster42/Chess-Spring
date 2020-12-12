@@ -1,4 +1,4 @@
 package com.chess.connection;
 
-public class Connnection {
+public class Connection {
 }

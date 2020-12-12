@@ -6,14 +6,15 @@ import com.chess.models.requests.BoardRequest;
 import com.chess.models.responses.StatusResponse;
 import com.chess.pieces.*;
 import com.chess.board.*;
+import com.chess.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Game {
-    public static Player player1;
-    public static Player player2;
+    public Player player1;
+    public Player player2;
     public static Player[] players = new Player[2];
     private static boolean promotion = false;
     private final int id;

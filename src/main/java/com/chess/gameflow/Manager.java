@@ -12,13 +12,12 @@ public class Manager {
 
     public static Game createGame(String name1){
         Game game = new Game(gameID, name1);
-        gameID++;
         allGames.add(game);
         return game;
     }
 
     public static Game joinGame(String name){
-
+        gameID++;
     }
 
     public static Board getBoard(int id){

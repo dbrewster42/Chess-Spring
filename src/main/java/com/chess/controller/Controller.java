@@ -10,9 +10,9 @@ import com.chess.models.responses.MovesResponse;
 import com.chess.models.responses.PieceResponse;
 import com.chess.models.responses.Response;
 import com.chess.models.responses.StatusResponse;
+import com.chess.player.Player;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
@@ -31,6 +31,7 @@ public class Controller {
     @PostMapping("/server")
     public String firstPlayer(@ResponseBody PlayerRequest request){
         game = Manager.createGame(request.getName1());
+
     }
 
 //    @PostMapping("/players")
