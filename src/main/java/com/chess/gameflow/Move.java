@@ -1,7 +1,6 @@
 package com.chess.gameflow;
 
 import com.chess.pieces.Piece;
-import com.chess.player.Player;
 
 public class Move {
     private int x, y, endX, endY;

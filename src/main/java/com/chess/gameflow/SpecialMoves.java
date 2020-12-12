@@ -4,7 +4,6 @@ import com.chess.board.*;
 import com.chess.exceptions.InvalidMoveException;
 import com.chess.exceptions.MustDefeatCheckException;
 import com.chess.pieces.*;
-import com.chess.player.Player;
 
 import java.util.List;
 

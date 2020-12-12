@@ -4,7 +4,6 @@ import com.chess.board.Board;
 import com.chess.pieces.King;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Type;
-import com.chess.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.chess.models.responses;
 
-import com.chess.player.Player;
+import com.chess.gameflow.Player;
 
 public class StatusResponse extends Response {
     private boolean active = true;
