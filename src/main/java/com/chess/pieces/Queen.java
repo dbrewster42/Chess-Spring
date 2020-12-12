@@ -70,10 +70,9 @@ public class Queen extends Piece {
     **********Queen can move in any 1 direction infinitely if not blocked, but only 1 direction  ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         // System.out.println("MY QUEEN!");
         //System.out.println("from the " + x + "" + y + " to the " + endX + "" + endY);
-        Board board = Board.boardConstructor();
         int condition1 = Math.abs(endX - x);
         int condition2 = Math.abs(endY - y);
         int checkX, checkY, betweenX, betweenY;

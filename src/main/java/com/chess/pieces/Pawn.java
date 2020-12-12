@@ -58,8 +58,7 @@ public class Pawn extends Piece {
     **********Checks To Ensure Piece is moving Forward 1 spot, unless first move in which case it can move 2, or capturing ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
-        Board board = Board.boardConstructor();
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         int direction = endX - x;
         // System.out.println(this.color + this.type + this.name);
         if (this.name.equals("wpawn.png")) {

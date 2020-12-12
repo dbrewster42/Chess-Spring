@@ -75,12 +75,11 @@ public class King extends Piece {
     /*
     **********For cycling through all pieces to prevent King from moving into check or out of checkmate ************
     */
-    public int[] canMakeMove() {
+    public int[] canMakeMove(Board board) {
         int[] possibleMoves = { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
         int count = 0;
         int checkX = this.x - 1;
         int checkY = this.y - 1;
-        Board board = Board.boardConstructor();
         System.out.println("King's location: " + this.x + "" + this.y + " count: " + count);
         for (int i = checkX; i < checkX + 3; i++) {
             if (i < 0 || i > 7) {
@@ -120,7 +119,7 @@ public class King extends Piece {
     **********King can move 1 spot in any direction ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         if (Math.abs(endX - x) < 2 && Math.abs(endY - y) < 2) {
             setXY(endX, endY);
             //System.out.println("King moved to " + this.x + this.y);

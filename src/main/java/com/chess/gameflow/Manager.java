@@ -10,11 +10,15 @@ public class Manager {
     private static List<Game> allGames = new ArrayList<Game>();
     //private Board board;
 
-    public static Game createGame(String name1, String name2){
-        Game game = new Game(gameID, name1, name2);
+    public static Game createGame(String name1){
+        Game game = new Game(gameID, name1);
         gameID++;
         allGames.add(game);
         return game;
+    }
+
+    public static Game joinGame(String name){
+
     }
 
     public static Board getBoard(int id){

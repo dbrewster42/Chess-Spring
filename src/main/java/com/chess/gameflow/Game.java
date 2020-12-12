@@ -23,19 +23,28 @@ public class Game {
     public List<Move> moves;
     //private Move move;
 
-    public Game(int id, String name, String name2){
-        //Status.setStatus();
+
+    public Game(int id, String name){
         this.status = new Status();
         this.id = id;
         board = new Board(id);
         this.moves = new ArrayList<Move>();
-        //id++;
-        Player player1 = Player.createPlayer(name, true);
-        Player player2 = Player.createPlayer(name2, false);
-        //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
-        players[0] = player1;
-        players[1] = player2;
+        player1 = Player.createPlayer(board, name, true);
     }
+
+//    public Game(int id, String name, String name2){
+//        //Status.setStatus();
+//        this.status = new Status();
+//        this.id = id;
+//        board = new Board(id);
+//        this.moves = new ArrayList<Move>();
+//        //id++;
+//        player1 = Player.createPlayer(board, name, true);
+//        player2 = Player.createPlayer(board, name2, false);
+//        //System.out.println(player1.getName() + " !!!!!!!!!!!!!!!!!!!!!!!");
+//        players[0] = player1;
+//        players[1] = player2;
+//    }
 
     /*
      ************** Prints All Moves ****************
@@ -94,10 +103,9 @@ public class Game {
     /*
      ************** Move Your Piece ****************
      */
-    public void movePiece(Player player, int pieceSelection, int action) {
+    public void movePiece(Board board, Player player, int pieceSelection, int action) {
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
         //Square initial = Board.squares[x][y];
         Square initial = board.getSquare(x, y);
         Piece piece = initial.getPiece();
@@ -105,7 +113,7 @@ public class Game {
         int endX = action / 10;
         int endY = action % 10;
         //// Validates that the specific piece can move in manner intended
-        if (piece.isValidMove(x, y, endX, endY)) {
+        if (piece.isValidMove(board, x, y, endX, endY)) {
             if (board.getSquare(endX, endY).hasPiece()) {
                 if (player.hasPiece(board.getSquare(endX, endY).getPiece())) {
                     throw new InvalidMoveException("Invalid choice. You already have a piece there!");
@@ -115,20 +123,20 @@ public class Game {
             if (status.isCheck()) {
                 //if (Status.defeatCheck(player, piece, endX, endY)) {
                 board.getSquare(x, y).setPiece(null);
-                if (Checking.defeatAllChecks(player, piece, endX, endY)){
+                if (Checking.defeatAllChecks(board, player, piece, endX, endY)){
                     System.out.println(player.getName() + " has moved out of check!");
                     status.setCheck(false);
                 } else {
                     if (piece.getType().equals(Type.KING)){
-                        piece.isValidMove(x, y, x, y);
+                        piece.isValidMove(board, x, y, x, y);
                     }
                     board.getSquare(x, y).setPiece(piece);
                     System.out.println(piece.getType() + " is back at " + x + y);
                     throw new MustDefeatCheckException("Invalid move! You must move out of check!");
                 }
-            } else if (Checking.movedIntoCheck(player, piece, pieceSelection, action)){
+            } else if (Checking.movedIntoCheck(board, player, piece, pieceSelection, action)){
                 if (piece.getType().equals(Type.KING)){
-                    piece.isValidMove(x, y, x, y);
+                    piece.isValidMove(board, x, y, x, y);
                 }
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
@@ -155,11 +163,11 @@ public class Game {
 
             System.out.println("Game.java 154 " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
             ///checks to see if the move has put the opposing King in check
-            if (Checking.didCheck(player, piece, endX, endY)) {
+            if (Checking.didCheck(board, player, piece, endX, endY)) {
                 move.addCheck();
                 status.setCheck(true);
                 System.out.println("Game.java Check: " + status.isCheck());
-                if (Checking.didCheckMate(otherPlayer)) {
+                if (Checking.didCheckMate(board, otherPlayer)) {
                     move.addCheckmate();
                     status.setCheckMate(true);
                     status.setActive(false);
@@ -172,7 +180,7 @@ public class Game {
         }
     }
 
-    public StatusResponse run(BoardRequest boardRequest){
+    public StatusResponse run(BoardRequest boardRequest, Board board){
         System.out.println("");
         System.out.println("");
         if (status.isActive()) {
@@ -181,9 +189,9 @@ public class Game {
                 player = players[0];
             }
             if (boardRequest.getEnd() == 999) {
-                SpecialMoves.makeSpecialMove(boardRequest.getStart(), player, status.isCheck(), moves);
+                SpecialMoves.makeSpecialMove(board, boardRequest.getStart(), player, status.isCheck(), moves);
             } else {
-                movePiece(player, boardRequest.getStart(), boardRequest.getEnd());
+                movePiece(board, player, boardRequest.getStart(), boardRequest.getEnd());
             }
             Player otherPlayer = getOtherTeam(player);
             StatusResponse returnValue = new StatusResponse(status.isActive(), status.isCheck(), otherPlayer);
@@ -201,14 +209,13 @@ public class Game {
     /*
      ************** Undo side effects in tandem with Memento ****************
      */
-    public StatusResponse undo() {
+    public StatusResponse undo(Board board) {
         Move lastMove = moves.get(moves.size() - 1);
         int x = lastMove.getEndX();
         int y = lastMove.getEndY();
         int prevX = lastMove.getX();
         int prevY = lastMove.getY();
         Player player = lastMove.getPlayer();
-        Board board = Board.boardConstructor();
         board.getSquare(prevX, prevY).setPiece(lastMove.getPiece());
         if (lastMove.capture) {
             //if (lastMove.passant)
@@ -217,20 +224,15 @@ public class Game {
             player.restorePiece(piece);
         } else if (lastMove.castle) {
             King king;
+            Piece rook = lastMove.getPiece();
+            board.getSquare(prevX, prevY).setPiece(rook);
+            board.getSquare(x, y).setPiece(null);
             if (y == 0){
-//                king = (King) Board.squares[prevX][2].getPiece();
-//                Board.squares[prevX][4].setPiece(king);
-//                king.setXY(prevX, 4);
-//                Board.squares[prevX][2].setPiece(null);
                 king = (King) board.getSquare(prevX, 2).getPiece();
                 board.getSquare(prevX, 4).setPiece(king);
                 king.setXY(prevX, 4);
                 board.getSquare(prevX, 2).setPiece(null);
             } else {
-//                king = (King) Board.squares[prevX][6].getPiece();
-//                Board.squares[prevX][4].setPiece(king);
-//                king.setXY(prevX, 4);
-//                Board.squares[prevX][6].setPiece(null);
                 king = (King) board.getSquare(prevX, 6).getPiece();
                 board.getSquare(prevX, 4).setPiece(king);
                 king.setXY(prevX, 4);
@@ -241,10 +243,8 @@ public class Game {
             player.restorePiece(piece);
             if (piece.getColor().equals("white")){
                 board.getSquare(x+1, y);
-                //Board.squares[x+1][y].setPiece(piece);
             } else {
                 board.getSquare(x-1, y);
-                //Board.squares[x-1][y].setPiece(piece);
             }
         } else {
             board.getSquare(x, y).setPiece(null);

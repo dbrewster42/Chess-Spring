@@ -1,6 +1,8 @@
 package com.chess.pieces;
 
 
+import com.chess.board.Board;
+
 public abstract class Piece {
 
     /*
@@ -21,8 +23,8 @@ public abstract class Piece {
     /*
     **********Returns Whether Move is Accepted Based on the piece's movement ability************
     */
-    public abstract boolean isValidMove(int x, int y, int endX, int endY);
-
+    //public abstract boolean isValidMove(int x, int y, int endX, int endY);
+    public abstract boolean isValidMove(Board board, int x, int y, int endX, int endY);
     // @Override
     // public boolean equals(Object comparator) {
     //     if (comparator == null) {

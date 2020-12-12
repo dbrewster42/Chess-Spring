@@ -1,5 +1,7 @@
 package com.chess.pieces;
 
+import com.chess.board.Board;
+
 public class Knight extends Piece {
     private Type type;
     private String color;
@@ -70,7 +72,7 @@ public class Knight extends Piece {
     **********Checks To Ensure Piece is moving 1 spot vertically and 2 spots horizontally or vise versa ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         int condition1 = Math.abs(x - endX);
         int condition2 = Math.abs(y - endY);
         if (condition1 == 1) {

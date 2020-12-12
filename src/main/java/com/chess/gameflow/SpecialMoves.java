@@ -4,25 +4,23 @@ import com.chess.board.*;
 import com.chess.exceptions.InvalidMoveException;
 import com.chess.exceptions.MustDefeatCheckException;
 import com.chess.pieces.*;
-
 import java.util.List;
 
 public class SpecialMoves {
     /*
      ************** Decides which Special Move is applicable ****************
      */
-    public static void makeSpecialMove(int pieceSelect, Player player, boolean isCheck, List<Move> moves){
+    public static void makeSpecialMove(Board board, int pieceSelect, Player player, boolean isCheck, List<Move> moves){
         int x = pieceSelect / 10;
         int y = pieceSelect % 10;
-        Board board = Board.boardConstructor();
         Piece piece = board.getSquare(x, y).getPiece();
         if (piece.getType().equals(Type.PAWN)) {
-            if (isValidPassant(player, pieceSelect, moves))
-                doPassant(player, pieceSelect, moves);
+            if (isValidPassant(board, player, pieceSelect, moves))
+                doPassant(board, player, pieceSelect, moves);
             else throw new InvalidMoveException("This does not meet the en Passant conditions");
         } else if (piece.getType().equals(Type.ROOK)) {
-            if (isValidCastle(player, pieceSelect, isCheck))
-                doCastle(player, pieceSelect);
+            if (isValidCastle(board, player, pieceSelect, isCheck))
+                doCastle(board, player, pieceSelect);
             else throw new InvalidMoveException("This does not meet valid Castling conditions");
         } else {
             if (piece.getType().equals(Type.KING)){
@@ -36,13 +34,12 @@ public class SpecialMoves {
     /*
     ************** Checks whether Castling Conditions are Valid ****************
     */
-    public static boolean isValidCastle(Player player, int pieceSelection, boolean isCheck) {
+    public static boolean isValidCastle(Board board, Player player, int pieceSelection, boolean isCheck) {
         if (isCheck) {
             throw new InvalidMoveException("You cannot Castle while in check");
         }
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
         Piece piece = board.getSquare(x, y).getPiece();
         if (piece.getType() == Type.ROOK) {
             if (x == 7 || x == 0) {
@@ -90,11 +87,10 @@ public class SpecialMoves {
     /*
     ************** Performs Special Castle Move ****************
     */
-    public static void doCastle(Player player, int pieceSelection) {
+    public static void doCastle(Board board, Player player, int pieceSelection) {
         //List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
         Piece piece = board.getSquare(x, y).getPiece();
         Piece theKing = board.getSquare(x, 4).getPiece();
         King king = player.getKing();
@@ -106,7 +102,7 @@ public class SpecialMoves {
 //        }
         if (y == 0) {
             int action = x * 10 + y;
-            if (Checking.movedIntoCheck(player, king, pieceSelection, action)){
+            if (Checking.movedIntoCheck(board, player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             board.getSquare(x, 3).setPiece(piece);
@@ -117,7 +113,7 @@ public class SpecialMoves {
             Move move = new Move(player, piece, x, y, x, 3, true);
         } else if (y == 7) {
             int action = x * 10 + y;
-            if (Checking.movedIntoCheck(player, king, pieceSelection, action)){
+            if (Checking.movedIntoCheck(board, player, king, pieceSelection, action)){
                 throw new MustDefeatCheckException("Invalid move! You may not move into check!");
             }
             board.getSquare(x, 5).setPiece(piece);
@@ -134,9 +130,8 @@ public class SpecialMoves {
         System.out.println("SpecialMoves.java " + player.getName() + "'s King current location is at " + player.getKing().getX() + player.getKing().getY());
     }
 
-    public static boolean isValidPassant(Player player, int pieceSelection, List<Move> moves) {
+    public static boolean isValidPassant(Board board, Player player, int pieceSelection, List<Move> moves) {
         //List<Move> moves = Move.moves;
-        Board board = Board.boardConstructor();
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
         Piece piece = board.getSquare(x, y).getPiece();
@@ -154,18 +149,16 @@ public class SpecialMoves {
                 }
             }
             System.out.println("This is not a valid Passant move");
-            return false;
         } else {
             System.out.println("A Passant is only applicable for a Pawn");
-            return false;
         }
+        return false;
     }
 
-    public static void doPassant(Player player, int pieceSelection, List<Move> moves) {
+    public static void doPassant(Board board, Player player, int pieceSelection, List<Move> moves) {
         //List<Move> moves = Move.moves;
         int x = pieceSelection / 10;
         int y = pieceSelection % 10;
-        Board board = Board.boardConstructor();
         Piece piece = board.getSquare(x, y).getPiece();
         Move lastMove = moves.get(moves.size() - 1);
         int prevX = lastMove.getX();

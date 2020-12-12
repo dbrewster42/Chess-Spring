@@ -11,17 +11,17 @@ import java.util.List;
 public class Checking {
     static Attacker[] attackers = new Attacker[2];
 
-    public static boolean movedIntoCheck(Player player, Piece piece, int start, int end){
+    public static boolean movedIntoCheck(Board board, Player player, Piece piece, int start, int end){
         System.out.println("Status.java movedIntoCheck()");
-        Board board = Board.boardConstructor();
+
         int endX = end / 10;
         int endY = end % 10;
         // if King moved, check all opposing pieces to see if they can check
         if (piece.getType().equals(Type.KING)) {
-            List<Attacker> allEnemies = allEnemies(piece);
+            List<Attacker> allEnemies = allEnemies(board, piece);
             for (Attacker each : allEnemies){
                 //System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
-                if (each.piece.isValidMove(each.x, each.y, endX, endY)){
+                if (each.piece.isValidMove(board, each.x, each.y, endX, endY)){
                     return true;
                 }
             }
@@ -53,7 +53,7 @@ public class Checking {
                                 return false;
                             } else {
                                 if (checkPiece.getType().equals(Type.QUEEN) || checkPiece.getType().equals(Type.ROOK)){
-                                    if (checkPiece.isValidMove(x, y, kingX, kingY)){
+                                    if (checkPiece.isValidMove(board, x, y, kingX, kingY)){
                                         return true;
                                     }else {
                                         return false;
@@ -82,7 +82,7 @@ public class Checking {
                                 return false;
                             } else {
                                 if (checkPiece.getType().equals(Type.QUEEN) || checkPiece.getType().equals(Type.ROOK)) {
-                                    if (checkPiece.isValidMove(x, y, kingX, kingY)){
+                                    if (checkPiece.isValidMove(board, x, y, kingX, kingY)){
                                         return true;
                                     }else {
                                         return false;
@@ -115,7 +115,7 @@ public class Checking {
                             return false;
                         } else {
                             if (checkPiece.getType().equals(Type.QUEEN) || checkPiece.getType().equals(Type.BISHOP)) {
-                                if (checkPiece.isValidMove(x, y, kingX, kingY)){
+                                if (checkPiece.isValidMove(board, x, y, kingX, kingY)){
                                     return true;
                                 }else {
                                     return false;
@@ -139,7 +139,7 @@ public class Checking {
     /*
      ************** Checks for Check! After every move it scans the pieces to see if it has put the other team in check ****************
      */
-    public static boolean didCheck(Player player, Piece piece, int x, int y) {
+    public static boolean didCheck(Board board, Player player, Piece piece, int x, int y) {
         if (piece.getType().equals(Type.KING)) {
             return false;
         }
@@ -152,16 +152,15 @@ public class Checking {
         System.out.println("Status.didCheck() - The opposing king is at square " + kingX + kingY);
         //************************************************************************************************************
         //******************************************************//
-        if (piece.isValidMove(x, y, kingX, kingY)) {
+        if (piece.isValidMove(board, x, y, kingX, kingY)) {
             Attacker attacker = Attacker.createAttacker(piece, x, y);
             attackers[0] = attacker;
             return true;
         }
         return false;
     }
-    public static List<Attacker> allEnemies(Piece piece){
+    public static List<Attacker> allEnemies(Board board, Piece piece){
         List<Attacker> allEnemies = new ArrayList<>();
-        Board board = Board.boardConstructor();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board.getSquare(i, j).hasPiece()) {
@@ -178,10 +177,10 @@ public class Checking {
         return allEnemies;
     }
     //false means did not beat check
-    public static boolean defeatAllChecks(Player player, Piece piece, int endX, int endY){
+    public static boolean defeatAllChecks(Board board, Player player, Piece piece, int endX, int endY){
         System.out.println("Status.java defeatAllChecks()");
         Attacker original = attackers[0];
-        Board board = Board.boardConstructor();
+
         ///
         Piece oldPiece = null;
         if (board.getSquare(endX, endY).hasPiece()) {
@@ -190,15 +189,15 @@ public class Checking {
         /// makes attempted move and validates if out of check
         board.getSquare(endX, endY).setPiece(piece);
         ///
-        if (!defeatCheck(player, piece, endX, endY, original)){
+        if (!defeatCheck(board, player, piece, endX, endY, original)){
             board.getSquare(endX, endY).setPiece(oldPiece);
             System.out.println("Status.199 did not defeat check by the Checker, get it together!");
             return false;
         }
-        List<Attacker> allEnemies = allEnemies(piece);
+        List<Attacker> allEnemies = allEnemies(board, piece);
         for (Attacker each : allEnemies){
             System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
-            if (defeatCheck(player, piece, endX, endY, each)){
+            if (defeatCheck(board, player, piece, endX, endY, each)){
                 continue;
             } else {
                 System.out.println("Status.defeatAllChecks().208 did not defeat check by " + each.getPiece().getType()  + " at " + each.getX() + each.getY() + " to " + endX + endY);
@@ -211,7 +210,7 @@ public class Checking {
         //true means not checkmate
     }
 
-    public static boolean defeatCheck(Player player, Piece piece, int endX, int endY, Attacker attacker) {
+    public static boolean defeatCheck(Board board, Player player, Piece piece, int endX, int endY, Attacker attacker) {
         //if attacking piece is captured, then check is defeated unless taken by King
         if (endX == attacker.x && endY == attacker.y) {
 //            Board.squares[endX][endY].setPiece(piece);
@@ -239,7 +238,7 @@ public class Checking {
         int kingX = king.getX();
         int kingY = king.getY();
 
-        if (attacker.piece.isValidMove(attacker.x, attacker.y, kingX, kingY)) {
+        if (attacker.piece.isValidMove(board, attacker.x, attacker.y, kingX, kingY)) {
             System.out.println("Status.defeatCheck() - returns false by " + attacker.piece.getType() + attacker.x + attacker.y + " to the king at " + kingX + kingY);
             return false;
         } else {
@@ -248,7 +247,7 @@ public class Checking {
         }
     }
 
-    public static boolean didCheckMate(Player player) {
+    public static boolean didCheckMate(Board board, Player player) {
         //player is the Opposing (checked) Player
         System.out.println("Status.java didCheckMate()");
         String color = "black";
@@ -263,7 +262,7 @@ public class Checking {
         int kingY = king.getY();
         int xDirection = 0;
         int yDirection = 0;
-        int[] possibleMoves = king.canMakeMove();
+        int[] possibleMoves = king.canMakeMove(board);
         if (attacker.x - kingX > 0) {
             xDirection = -1;
         } else if (attacker.x - kingX < 0) {
@@ -274,7 +273,6 @@ public class Checking {
         } else if (attacker.y - kingY < 0) {
             yDirection = 1;
         }
-        Board board = Board.boardConstructor();
         board.getSquare(kingX, kingY).setPiece(null);
         List<Integer> narrowedMoves = new ArrayList<>();
         /// Checking if king can move
@@ -284,7 +282,7 @@ public class Checking {
                 //System.out.println("Status.java 295: " + a + " not here");
                 break;
                 //} else if (kingX - possibleMoves[a] == xDirection && kingY - possibleMoves[a + 1] == yDirection) {
-            } else if (attacker.piece.isValidMove(attacker.x, attacker.y, possibleMoves[a], possibleMoves[a+1])) {
+            } else if (attacker.piece.isValidMove(board, attacker.x, attacker.y, possibleMoves[a], possibleMoves[a+1])) {
                 //System.out.println("Status.java 300: King cannot move to " + possibleMoves[a] + "" + possibleMoves[a + 1]);
                 continue;
 
@@ -317,7 +315,7 @@ public class Checking {
                                 break;
                             }
                             //System.out.println("Status.java 333: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
-                            if (piece.isValidMove(i, j, blockX, blockY)) {
+                            if (piece.isValidMove(board, i, j, blockX, blockY)) {
                                 System.out.println("Status.java 337: Not checkmate- Can be blocked by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
                                 return false; //is not checkmate
@@ -328,7 +326,7 @@ public class Checking {
                     } else {
                         //System.out.println("Status.java 345: Enemy piece is at " + i + j + ". Can " + piece.getType() + " reach any of the " + narrowedMoves.size() / 2);
                         for (int n =0; n< narrowedMoves.size(); n+=2){
-                            if (piece.isValidMove(i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
+                            if (piece.isValidMove(board, i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
                                 narrowedMoves.remove(n +1);
                                 narrowedMoves.remove(n);
                                 n -= 2;
@@ -365,7 +363,7 @@ public class Checking {
     // return false;
 
     // public static void storeAttacker(Player player, Piece piece, int x, int y) {}
-    public static boolean didStalemate(Player player) {
+    public static boolean didStalemate(Board board, Player player) {
         //INCLUDE THIS IN THE CALL!!!!!
 //        if (status.check){
 //            return false;
@@ -381,9 +379,8 @@ public class Checking {
         King king = player.getKing();
         // int kingX = king.getX();
         // int kingY = king.getY();
-        int[] possibleMoves = king.canMakeMove();
+        int[] possibleMoves = king.canMakeMove(board);
         int a = 0;
-        Board board = Board.boardConstructor();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board.getSquare(i, j).hasPiece()) {
@@ -400,7 +397,7 @@ public class Checking {
                             }
                             System.out.println(
                                     "Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
-                            if (piece.isValidMove(i, j, blockX, blockY)) {
+                            if (piece.isValidMove(board, i, j, blockX, blockY)) {
                                 System.out.println("Can be reached by " + piece.getType() + " at " + i + "" + j
                                         + " to  " + blockX + "" + blockY);
                                 System.out.println("Not checkmate");

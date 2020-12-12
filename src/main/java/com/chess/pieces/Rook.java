@@ -56,8 +56,7 @@ public class Rook extends Piece {
     **********Rook can move in any horizontally or vertically infinitely if not blocked  ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
-        Board board = Board.boardConstructor();
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         int condition1 = endX - x;
         int condition2 = endY - y;
         if (condition1 == 0 || condition2 == 0) {

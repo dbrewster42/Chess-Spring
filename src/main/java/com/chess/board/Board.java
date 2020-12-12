@@ -17,18 +17,18 @@ public class Board {
         this.id = id;
         //dynamically creates board composed of 64 squares
         generateBoard();
-        showDetailedBoard();
+        //showDetailedBoard();
     }
 
-    /*
-     **********Singleton Constructor ************
-     */
-    public static Board boardConstructor() {
-        if (uni == null) {
-            uni = new Board(1);
-        }
-        return uni;
-    }
+//    /*
+//     **********Singleton Constructor ************
+//     */
+//    public static Board boardConstructor() {
+//        if (uni == null) {
+//            uni = new Board(1);
+//        }
+//        return uni;
+//    }
 //    public Board getBoard(){
 //        return this;
 //    }

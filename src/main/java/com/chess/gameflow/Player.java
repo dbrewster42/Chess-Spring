@@ -3,6 +3,7 @@ package com.chess.gameflow;
 import com.chess.pieces.*;
 import com.chess.board.Board;
 
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,22 +11,28 @@ public class Player {
     private String name;
     List<Piece> team;
     private boolean isWhite;
+    private
 
-    private Player(String name, boolean isWhite) {
+    private Player(Board board, String name, boolean isWhite) {
         this.name = name;
         this.isWhite = isWhite;
         if (isWhite) {
-            team = takePieces(6);
+            team = takePieces(board, 6);
+            try {
+                serverSocket = new ServerSocket(Game.PORT);
+                socket = serverSocket.accept();
+                connection = new Connection(this, socket);
+            }
         } else {
-            team = takePieces(0);
+            team = takePieces(board, 0);
         }
     }
 
     /*
      ************** Initialization of Players ****************
      */
-    public static Player createPlayer(String name, boolean isWhite) {
-        Player player = new Player(name, isWhite);
+    public static Player createPlayer(Board board, String name, boolean isWhite) {
+        Player player = new Player(board, name, isWhite);
         if (isWhite) {
             System.out.println("I have heard of you " + name
                     + ", they say you do not treat your electronics with care. I hope you lose, jerk.");
@@ -38,8 +45,7 @@ public class Player {
     /*
      ************** Initialization of All Pieces ****************
      */
-    public static List<Piece> takePieces(int start) {
-        Board board = Board.boardConstructor();
+    public static List<Piece> takePieces(Board board, int start) {
         List<Piece> team = new ArrayList<Piece>(16);
         //int end = start + 2;
         for (int i = start; i < start + 2; i++) {

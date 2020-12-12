@@ -51,8 +51,7 @@ public class Bishop extends Piece {
     **********Checks To Ensure there are no pieces in between starting and ending spot ************
     */
     @Override
-    public boolean isValidMove(int x, int y, int endX, int endY) {
-        Board board = Board.boardConstructor();
+    public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         int width = x - endX;
         int length = y - endY;
         if (Math.abs(width) != Math.abs(length)) {
