@@ -54,7 +54,7 @@ public class Bishop extends Piece {
     public boolean isValidMove(Board board, int x, int y, int endX, int endY) {
         int width = x - endX;
         int length = y - endY;
-        if (Math.abs(width) != Math.abs(length)) {
+        if (Math.abs(width) != Math.abs(length) || (x == endX && y == endY)) {
             // System.out.println("Oh you Bishop " + Math.abs(width) + "" + Math.abs(length));
             return false;
         }

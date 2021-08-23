@@ -2,6 +2,7 @@ package com.chess.gameflow;
 
 import com.chess.board.Board;
 import com.chess.pieces.King;
+import com.chess.pieces.Knight;
 import com.chess.pieces.Piece;
 import com.chess.pieces.Type;
 
@@ -22,6 +23,7 @@ public class Checking {
             for (Attacker each : allEnemies){
                 //System.out.println(each.getPiece().getType() + " at " + each.getX() + each.getY());
                 if (each.piece.isValidMove(board, each.x, each.y, endX, endY)){
+                    System.out.println(each.getPiece().getType() + " can check the king from " + each.getX() + each.getY());
                     return true;
                 }
             }
@@ -294,45 +296,47 @@ public class Checking {
             }
         }
         board.getSquare(kingX, kingY).setPiece(king);
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (board.getSquare(i, j).hasPiece()) {
-                    Piece piece = board.getSquare(i, j).getPiece();
-                    //System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
-                    if (piece.getColor().equals(color)) {
-                        if (piece.getType().equals(Type.KING)) {
-                            continue;
-                        }
-                        int blockX = attacker.x;
-                        int blockY = attacker.y;
-                        while (true) {
-                            if (blockX > 7 || blockX < 0 || blockY > 7 || blockY < 0) {
-                                //System.out.println("Out of bounds");
-                                break;
+        if (attacker.getPiece().getType() != Type.KNIGHT){
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (board.getSquare(i, j).hasPiece()) {
+                        Piece piece = board.getSquare(i, j).getPiece();
+                        //System.out.println("Status.java 241: there is a piece at " + i + j + " " + piece.getType());
+                        if (piece.getColor().equals(color)) {
+                            if (piece.getType().equals(Type.KING)) {
+                                continue;
                             }
-                            if (blockX == kingX && blockY == kingY){
-                                //System.out.println("End of the line");
-                                break;
+                            int blockX = attacker.x;
+                            int blockY = attacker.y;
+                            while (true) {
+                                if (blockX > 7 || blockX < 0 || blockY > 7 || blockY < 0) {
+                                    //System.out.println("Out of bounds");
+                                    break;
+                                }
+                                if (blockX == kingX && blockY == kingY) {
+                                    //System.out.println("End of the line");
+                                    break;
+                                }
+                                //System.out.println("Status.java 333: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
+                                if (piece.isValidMove(board, i, j, blockX, blockY)) {
+                                    System.out.println("Status.java 337: Not checkmate- Can be blocked by " + piece.getType() + " at " + i + "" + j
+                                            + " to  " + blockX + "" + blockY);
+                                    return false; //is not checkmate
+                                }
+                                blockX += xDirection;
+                                blockY += yDirection;
                             }
-                            //System.out.println("Status.java 333: Can " + piece.getType() + " at " + i + "" + j + " reach " + blockX + "" + blockY);
-                            if (piece.isValidMove(board, i, j, blockX, blockY)) {
-                                System.out.println("Status.java 337: Not checkmate- Can be blocked by " + piece.getType() + " at " + i + "" + j
-                                        + " to  " + blockX + "" + blockY);
-                                return false; //is not checkmate
+                        } else {
+                            //System.out.println("Status.java 345: Enemy piece is at " + i + j + ". Can " + piece.getType() + " reach any of the " + narrowedMoves.size() / 2);
+                            for (int n = 0; n < narrowedMoves.size(); n += 2) {
+                                if (piece.isValidMove(board, i, j, narrowedMoves.get(n), narrowedMoves.get(n + 1))) {
+                                    narrowedMoves.remove(n + 1);
+                                    narrowedMoves.remove(n);
+                                    n -= 2;
+                                }
                             }
-                            blockX += xDirection;
-                            blockY += yDirection;
-                        }
-                    } else {
-                        //System.out.println("Status.java 345: Enemy piece is at " + i + j + ". Can " + piece.getType() + " reach any of the " + narrowedMoves.size() / 2);
-                        for (int n =0; n< narrowedMoves.size(); n+=2){
-                            if (piece.isValidMove(board, i, j, narrowedMoves.get(n), narrowedMoves.get(n+1))) {
-                                narrowedMoves.remove(n +1);
-                                narrowedMoves.remove(n);
-                                n -= 2;
-                            }
-                        }
 
+                        }
                     }
                 }
             }
